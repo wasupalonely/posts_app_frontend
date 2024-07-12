@@ -14,6 +14,7 @@ const App = () => {
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout, error }}>
       <Router>
+        <div className="font-sans">
         <Routes>
           <Route path='/' element={<LandingPage />} />
           <Route path="/login" element={isAuthenticated ? <Navigate to="/feed" /> : <Login />} />
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/feed" element={isAuthenticated ? <Feed /> : <Navigate to="/login" />} />
           <Route path="/chat" element={isAuthenticated ? <FollowerList /> : <Navigate to="/login" />} />
         </Routes>
+        </div>
       </Router>
     </AuthContext.Provider>
   );
