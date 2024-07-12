@@ -16,6 +16,7 @@ const useAuth = () => {
     try {
       const data = await loginApi(identifier, password);
       localStorage.setItem("authToken", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
       setIsAuthenticated(true);
       setError(null);
     } catch (err) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -50,7 +50,7 @@ const Dashboard = () => {
 
       const res = await axios.post('http://localhost:3000/api/v1/posts', formData, config);
 
-      // Actualizar la lista de posts después de subir uno nuevo
+
       setPosts([res.data.post, ...posts]);
       setContent('');
       setImage(null);

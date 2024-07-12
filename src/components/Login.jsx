@@ -15,12 +15,12 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/home');
+      navigate('/');
     }
   }, [isAuthenticated, navigate]);
 
   if (isAuthenticated) {
-    navigate('/home');
+    navigate('/');
   }
 
   return (

@@ -4,7 +4,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    navigate('/post');
+    navigate('/dashboard');
   };
 
   const handleRegister = () => {

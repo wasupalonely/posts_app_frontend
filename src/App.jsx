@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import useAuth from './hooks/useAuth';
 import Login from './components/Login';
 import Home from './components/Home';
-import Post from './components/Post';
-import Chat from './components/Chat';
+import FollowerList from './components/FollowerList';
+import Feed from './components/Feed';
 
 const App = () => {
   const { isAuthenticated, login, logout, error } = useAuth();
@@ -13,11 +13,11 @@ const App = () => {
     <AuthContext.Provider value={{ isAuthenticated, login, logout, error }}>
       <Router>
         <Routes>
-          <Route path='/*' element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
-          <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <Login />} />
+          <Route path='/*' element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
+          <Route path="/" element={isAuthenticated ? <Feed /> : <Login />} />
           <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
-          <Route path="/post" element={isAuthenticated ? <Post /> : <Navigate to="/" />} />
-          <Route path="/chat" element={isAuthenticated ? <Chat /> : <Navigate to="/" />} />
+          <Route path="/dashboard" element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
+          <Route path="/chat" element={isAuthenticated ? <FollowerList /> : <Navigate to="/" />} />
         </Routes>
       </Router>
     </AuthContext.Provider>

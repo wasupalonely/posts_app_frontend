@@ -4,5 +4,6 @@ const API_URL = 'http://localhost:3000/api/v1';
 
 export const login = async (identifier, password) => {
   const response = await axios.post(`${API_URL}/auth/login`, { identifier, password });
+  console.log("🚀 ~ login ~ response:", response)
   return response.data;
 };
