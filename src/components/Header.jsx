@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../App";
 import { useNavigate } from "react-router-dom";
+import Logo from "../assets/PostAppIcon.svg"; // Ruta al archivo SVG en assets
 
 const Header = () => {
   const navigate = useNavigate();
@@ -16,19 +17,8 @@ const Header = () => {
       <header className="bg-gray-800 shadow-md p-4 flex items-center justify-between">
         {/* Logo e nombre de la app */}
         <div className="flex items-center space-x-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-8 w-8 text-blue-500"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 3a7 7 0 110 14 7 7 0 010-14zm0 12a5 5 0 100-10 5 5 0 000 10z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <h1 className="text-xl font-bold text-white">Nombre de la App</h1>
+          <img src={Logo} alt="Logo" className="h-8 w-8" />
+          <h1 className="text-xl font-bold text-white">PostApp</h1>
         </div>
 
         <div className="relative">
