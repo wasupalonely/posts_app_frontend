@@ -26,6 +26,7 @@ const Header = () => {
           <h1 className="text-xl font-bold text-white">PostApp</h1>
         </div>
 
+<<<<<<< HEAD
         <div className="flex items-center space-x-4">
           <button onClick={() => navigate("/chat")}>
             <svg
@@ -71,6 +72,19 @@ const Header = () => {
               </div>
             )}
           </div>
+=======
+        <div className="relative">
+          <button
+            onClick={handleLogout}
+            className="flex items-center space-x-2 focus:outline-none"
+          >
+            <img
+              src= {profilePic || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+              alt="Imagen de perfil"
+              className="h-8 w-8 rounded-full"
+            />
+          </button>
+>>>>>>> 95c532b273e8c51af91b6365584828145d402425
         </div>
       </header>
     </div>
