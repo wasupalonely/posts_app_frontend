@@ -7,6 +7,7 @@ import Home from './components/Home';
 import FollowerList from './components/FollowerList';
 import Feed from './components/Feed';
 import Profile from './components/Profile'; // Importar el componente de perfil
+import Testxd from './components/Testxd';
 
 const App = () => {
   const { isAuthenticated, login, logout, error } = useAuth();
