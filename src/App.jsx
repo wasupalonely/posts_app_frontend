@@ -6,7 +6,7 @@ import Register from './components/Register';
 import Home from './components/Home';
 import FollowerList from './components/FollowerList';
 import Feed from './components/Feed';
-import LandingPage from './components/LandingPage'; // Importa el nuevo componente
+import Profile from './components/Profile'; // Importar el componente de perfil
 
 const App = () => {
   const { isAuthenticated, login, logout, error } = useAuth();
@@ -16,12 +16,13 @@ const App = () => {
       <Router>
         <div className="font-sans">
         <Routes>
-          <Route path='/' element={<LandingPage />} />
-          <Route path="/login" element={isAuthenticated ? <Navigate to="/feed" /> : <Login />} />
+          <Route path='/*' element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
+          <Route path="/" element={isAuthenticated ? <Feed /> : <Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
-          <Route path="/feed" element={isAuthenticated ? <Feed /> : <Navigate to="/login" />} />
-          <Route path="/chat" element={isAuthenticated ? <FollowerList /> : <Navigate to="/login" />} />
+          <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
+          <Route path="/dashboard" element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
+          <Route path="/chat" element={isAuthenticated ? <FollowerList /> : <Navigate to="/" />} />
+          <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} /> {/* Nueva ruta */}
         </Routes>
         </div>
       </Router>
