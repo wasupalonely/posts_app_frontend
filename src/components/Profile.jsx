@@ -53,7 +53,7 @@ const Profile = () => {
           <p className="text-gray-600 dark:text-gray-400">@{user.username}</p>
           <p className="text-gray-600 dark:text-gray-400">{user.email}</p>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md" onClick={handleLogout}>
             Cerrar Sesión
           </button>
