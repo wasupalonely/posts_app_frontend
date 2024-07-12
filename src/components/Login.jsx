@@ -2,16 +2,27 @@ import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../App';
 import { useNavigate } from 'react-router-dom';
 import PostIcon from '../assets/PostIcon.png';
+import SpinnerIcon from '../assets/PostAppIcon.svg'; // Importa tu SVG
+
+// Spinner component
+const Spinner = () => (
+  <div className="flex items-center justify-center">
+    <img src={SpinnerIcon} alt="Loading" className="animate-spin w-10 h-10" />
+  </div>
+);
 
 const Login = () => {
   const { login, isAuthenticated, error } = useContext(AuthContext);
   const navigate = useNavigate();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // New loading state
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading
     await login(identifier, password);
+    setIsLoading(false); // Stop loading
   };
 
   useEffect(() => {
@@ -19,10 +30,6 @@ const Login = () => {
       navigate('/');
     }
   }, [isAuthenticated, navigate]);
-
-  if (isAuthenticated) {
-    navigate('/');
-  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4">
@@ -59,8 +66,9 @@ const Login = () => {
           <button
             type="submit"
             className="w-full px-3 py-2 sm:px-4 sm:py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-300"
+            disabled={isLoading}
           >
-            Iniciar sesión
+            {isLoading ? <Spinner /> : 'Iniciar sesión'}
           </button>
         </form>
         <div className="mt-6 text-center">
