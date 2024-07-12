@@ -26,7 +26,6 @@ const CreatePost = () => {
     e.preventDefault();
 
     try {
-      console.log("USER", JSON.parse(localStorage.getItem("user")))
       const authorId = JSON.parse(localStorage.getItem("user"))._id;
       const formData = new FormData();
       formData.append("content", content);
