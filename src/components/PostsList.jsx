@@ -5,7 +5,9 @@ import { getUserById } from "../api/users";
 const PostsList = ({ posts, handleDeletePost }) => {
   const [users, setUsers] = useState({});
 
-  const dummyImage = "https://via.placeholder.com/150"; // URL de una imagen dummy
+  const dummyImage = "https://via.placeholder.com/150";
+
+  const id = JSON.parse(localStorage.getItem("user"))._id;
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -14,11 +16,17 @@ const PostsList = ({ posts, handleDeletePost }) => {
         if (!users[post.authorId] && !usersData[post.authorId]) {
           try {
             const response = await getUserById(post.authorId);
-            console.log("🚀 ~ fetchUsers ~ response:", response)
+            console.log("🚀 ~ fetchUsers ~ response:", response);
             usersData[post.authorId] = response;
           } catch (error) {
-            console.error(`Error fetching user data for authorId ${post.authorId}:`, error);
-            usersData[post.authorId] = { username: "Unknown", photo: dummyImage };
+            console.error(
+              `Error fetching user data for authorId ${post.authorId}:`,
+              error
+            );
+            usersData[post.authorId] = {
+              username: "Unknown",
+              photo: dummyImage,
+            };
           }
         }
       }
@@ -43,7 +51,9 @@ const PostsList = ({ posts, handleDeletePost }) => {
               alt={`${users[post.authorId]?.username || "Unknown"}'s avatar`}
               className="w-10 h-10 rounded-full mr-2"
             />
-            <p className="text-white">{users[post.authorId]?.username || "Unknown"}</p>
+            <p className="text-white">
+              {users[post.authorId]?.username || "Unknown"}
+            </p>
           </div>
           <p className="text-white">{post.content}</p>
           {post.media && post.media.length > 0 && (
@@ -58,16 +68,19 @@ const PostsList = ({ posts, handleDeletePost }) => {
               ))}
             </div>
           )}
+
           <div className="flex justify-between items-center mt-2">
             <p className="text-gray-400 text-sm">
               {new Date(post.createdAt).toLocaleString()}
             </p>
-            <button
-              onClick={() => handleDeletePost(post._id)}
-              className="text-red-600 hover:text-red-800 focus:outline-none"
-            >
-              Eliminar
-            </button>
+            {id === post.authorId && (
+              <button
+                onClick={() => handleDeletePost(post._id)}
+                className="text-red-600 hover:text-red-800 focus:outline-none"
+              >
+                Eliminar
+              </button>
+            )}
           </div>
         </div>
       ))}
