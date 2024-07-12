@@ -7,6 +7,8 @@ const Header = () => {
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
 
+  const profilePic = JSON.parse(localStorage.getItem("user")).profilePicture;
+
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -27,7 +29,7 @@ const Header = () => {
             className="flex items-center space-x-2 focus:outline-none"
           >
             <img
-              src="url_de_tu_imagen_de_perfil"
+              src= {profilePic || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
               alt="Imagen de perfil"
               className="h-8 w-8 rounded-full"
             />

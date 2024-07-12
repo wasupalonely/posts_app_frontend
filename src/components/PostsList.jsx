@@ -53,7 +53,7 @@ const PostsList = ({ posts, handleDeletePost }) => {
                   key={index}
                   src={media}
                   alt={`Media ${index}`}
-                  className="max-w-full h-auto rounded-md"
+                  className="max-w-full h-auto rounded-md max-h-64"
                 />
               ))}
             </div>
