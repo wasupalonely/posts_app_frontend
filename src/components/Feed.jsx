@@ -8,8 +8,6 @@ import Sidebar from "./Sidebar";
 const Feed = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
 
   const fetchPosts = async () => {
     try {
@@ -42,12 +40,8 @@ const Feed = () => {
 
       await axios.delete(`http://localhost:3000/api/v1/posts/${postId}`, config);
       setPosts(posts.filter((post) => post._id !== postId));
-      setSuccessMessage("Post eliminado exitosamente!");
-      setErrorMessage("");
     } catch (err) {
       console.error(err);
-      setErrorMessage("Error al eliminar el post, por favor intente de nuevo.");
-      setSuccessMessage("");
     }
   };
 
