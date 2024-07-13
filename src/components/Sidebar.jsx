@@ -49,17 +49,24 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         <nav className="px-2 py-4 space-y-2">
           <button
             className="flex items-center px-4 py-2 text-white rounded hover:bg-gray-700"
-            onClick={() => navigate("/chat")}
-          >
-            <box-icon color="white" name="chat"></box-icon>
-            <strong className="ml-2">Chat</strong>
-          </button>
-          <button
-            className="flex items-center px-4 py-2 text-white rounded hover:bg-gray-700"
             onClick={() => console.log("Profile")}
           >
             <box-icon color="white" name="user"></box-icon>
             <strong className="ml-2">Perfil</strong>
+          </button>
+          <button
+            className="flex items-center px-4 py-2 text-white rounded hover:bg-gray-700"
+            onClick={() => navigate("/chat")}
+          >
+            <box-icon color="white" name="chat"></box-icon>
+            <strong className="ml-2">Mensajes</strong>
+          </button>
+          <button
+            className="flex items-center px-4 py-2 text-white rounded hover:bg-gray-700"
+            onClick={() => navigate("/bookmarks")}
+          >
+            <box-icon color="white" name="bookmark"></box-icon>
+            <strong className="ml-2">Guardados</strong>
           </button>
           <button
             className="flex items-center px-4 py-2 text-white rounded hover:bg-gray-700"

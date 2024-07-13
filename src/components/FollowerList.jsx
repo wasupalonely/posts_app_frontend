@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getUsers } from "../api/users";
 import ChatWindow from "./ChatWindow";
 import Testxd from "./Testxd"; // No se usa en el componente, considera eliminarlo si no es necesario.
+import StatusMessage from "./StatusMessage";
 const dummyProfileImg = 'https://via.placeholder.com/150';
 
 const FollowerList = () => {
@@ -42,8 +43,14 @@ const FollowerList = () => {
 
       {/* Chat window */}
       <div className="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4">
-        {selectedUser && (
+        {selectedUser ? (
           <ChatWindow user={selectedUser} />
+        ) : (
+          <StatusMessage
+            type="info"
+            message="Empieza una charla con tus amigos!"
+            genericImage={'group'}
+          />
         )}
       </div>
     </div>

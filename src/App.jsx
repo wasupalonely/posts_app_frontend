@@ -6,8 +6,8 @@ import Register from './components/Register';
 import Home from './components/Home';
 import FollowerList from './components/FollowerList';
 import Feed from './components/Feed';
-import Profile from './components/Profile'; // Importar el componente de perfil
-import Testxd from './components/Testxd';
+import Profile from './components/Profile';
+import Bookmarks from './components/Bookmarks';
 
 const App = () => {
   const { isAuthenticated, login, logout, error } = useAuth();
@@ -23,7 +23,8 @@ const App = () => {
           <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
           <Route path="/dashboard" element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
           <Route path="/chat" element={isAuthenticated ? <FollowerList /> : <Navigate to="/" />} />
-          <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} /> {/* Nueva ruta */}
+          <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} />
+          <Route path='/bookmarks' element={isAuthenticated ? <Bookmarks /> : <Navigate to="/" />} />
         </Routes>
         </div>
       </Router>

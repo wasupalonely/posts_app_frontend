@@ -6,8 +6,6 @@ const CreatePost = ({ onPostCreated }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [image, setImage] = useState(null);
 
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
 
   const handleImageChange = (e) => {
@@ -40,10 +38,12 @@ const CreatePost = ({ onPostCreated }) => {
       const authorId = JSON.parse(localStorage.getItem("user"))._id;
       const formData = new FormData();
       formData.append("content", content);
-      formData.append("images", image);
+
       formData.append("authorId", authorId);
 
-      console.log("FORM DATA", formData);
+      if (image) {
+        formData.append("images", image);
+      }
 
       const token = localStorage.getItem("authToken");
       const config = {
@@ -52,20 +52,16 @@ const CreatePost = ({ onPostCreated }) => {
         },
       };
 
-      await axios.post("http://localhost:3000/api/v1/posts", formData, config);
+      const post = await axios.post("http://localhost:3000/api/v1/posts", formData, config);
 
       setContent("");
       setImage(null);
       setImagePreview(null);
-      setSuccessMessage("Post subido exitosamente!");
-      setErrorMessage("");
-      onPostCreated(); // Llamar a la función pasada como prop para actualizar el feed
+      onPostCreated(post);
     } catch (err) {
       console.error(err);
-      setErrorMessage("Error al subir el post, por favor intente de nuevo.");
-      setSuccessMessage("");
     } finally {
-      setIsLoading(false); // Desactivar estado de carga
+      setIsLoading(false);
     }
   };
 
@@ -87,7 +83,7 @@ const CreatePost = ({ onPostCreated }) => {
           disabled={isLoading} // Deshabilitar mientras está cargando
         ></textarea>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 justify-between">
           <div className="relative cursor-pointer" onClick={handleImageClick}>
             {imagePreview ? (
               <div className="relative">
@@ -98,10 +94,10 @@ const CreatePost = ({ onPostCreated }) => {
                 />
                 <button
                   onClick={handleImageRemove}
-                  className="absolute top-0 right-0 text-white rounded-full p-1"
-                  disabled={isLoading} // Deshabilitar mientras está cargando
+                  className="absolute top-[-8px] right-[-8px] bg-white text-black rounded-full p-1 flex items-center justify-center w-6 h-6"
+                  disabled={isLoading}
                 >
-                  ✕
+                  <box-icon name="x" size="sm" color="black"></box-icon>
                 </button>
               </div>
             ) : (
@@ -131,8 +127,6 @@ const CreatePost = ({ onPostCreated }) => {
             {isLoading ? "Cargando..." : "Publicar"}
           </button>
         </div>
-        {successMessage && <p className="text-green-500">{successMessage}</p>}
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       </form>
     </>
   );
