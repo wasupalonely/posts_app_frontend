@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getUsers } from "../api/users";
 import ChatWindow from "./ChatWindow";
-import Testxd from "./Testxd"; // No se usa en el componente, considera eliminarlo si no es necesario.
 import StatusMessage from "./StatusMessage";
 const dummyProfileImg = 'https://via.placeholder.com/150';
 
