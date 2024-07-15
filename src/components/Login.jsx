@@ -1,10 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../App';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import PostIcon from '../assets/PostIcon.png';
-import SpinnerIcon from '../assets/PostAppIcon.svg'; // Importa tu SVG
+import SpinnerIcon from '../assets/PostAppIcon.svg';
 
-// Spinner component
 const Spinner = () => (
   <div className="flex items-center justify-center">
     <img src={SpinnerIcon} alt="Loading" className="animate-spin w-10 h-10" />
@@ -16,13 +15,13 @@ const Login = () => {
   const navigate = useNavigate();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // New loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
     await login(identifier, password);
-    setIsLoading(false); // Stop loading
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -71,12 +70,17 @@ const Login = () => {
             {isLoading ? <Spinner /> : 'Iniciar sesión'}
           </button>
         </form>
+        <div className="mt-4 text-center">
+          <Link to="/forgot-password" className="text-blue-500 hover:underline dark:text-blue-300">
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </div>
         <div className="mt-6 text-center">
           <p className="text-gray-600 dark:text-gray-400">
             ¿No tienes una cuenta?{' '}
-            <a href="/register" className="text-blue-500 hover:underline dark:text-blue-300">
+            <Link to="/register" className="text-blue-500 hover:underline dark:text-blue-300">
               Regístrate
-            </a>
+            </Link>
           </p>
         </div>
       </div>
