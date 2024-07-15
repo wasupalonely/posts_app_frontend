@@ -18,12 +18,12 @@ const App = () => {
   const { isAuthenticated, loading, login, logout, error } = useAuth(); // Añadir loading
 
   if (loading) {
-    return <div>Loading...</div>; // Mostrar un mensaje de carga
+    return <div>Loading...</div>;
   }
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout, error }}>
-      <SocketProvider> {/* Envuelve la aplicación con el SocketProvider */}
+      <SocketProvider>
         <Router>
           <div className="font-sans">
             <Routes>

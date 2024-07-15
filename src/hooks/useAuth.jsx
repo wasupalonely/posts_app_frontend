@@ -19,12 +19,10 @@ const useAuth = () => {
       const data = await loginApi(identifier, password);
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      console.log("token from local storage", localStorage.getItem("authToken"));
       setIsAuthenticated(true);
       setError(null);
     } catch (err) {
       setError(err.response ? err.response.data.message : "Login failed");
-      console.log("error ...", err);
     }
   }, []);
 
@@ -32,7 +30,6 @@ const useAuth = () => {
     setIsAuthenticated(false);
     localStorage.removeItem("authToken");
     localStorage.removeItem("user");
-    console.log("token from local storage", localStorage.getItem("authToken"));
   }, []);
 
   return { isAuthenticated, loading, login, logout, error }; // Añadir loading al retorno

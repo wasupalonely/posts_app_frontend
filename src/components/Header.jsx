@@ -27,20 +27,6 @@ const Header = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <button onClick={() => navigate("/chat")}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-gray-300"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 12a2 2 0 100-4 2 2 0 000 4zM2 8a6 6 0 1110.92 4.92l4.42 4.42a1 1 0 01-1.42 1.42l-4.42-4.42A6 6 0 012 8z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
 
           <div className="relative">
             <button

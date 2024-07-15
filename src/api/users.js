@@ -22,6 +22,7 @@ export const getUserById = async (id) => {
       },
     };
     const response = await axios.get(`${API_URL}/users/${id}`, config);
+    console.log("🚀 ~ getUserById ~ response:", response)
     return response.data;
   } catch (error) {
     console.error(error);

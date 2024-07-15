@@ -91,6 +91,25 @@ const usePosts = () => {
     setPosts((prevPosts) => [post.data, ...prevPosts]);
   };
 
+  const createPost = async (content, image) => {
+    const formData = new FormData();
+    formData.append("content", content);
+    formData.append("authorId", id);
+
+    if (image) {
+      formData.append("images", image);
+    }
+
+    try {
+      const post = await axios.post("http://localhost:3000/api/v1/posts", formData, config);
+      handlePostCreated(post);
+      return post;
+    } catch (err) {
+      setError(err);
+      throw err;
+    }
+  };
+
   useEffect(() => {
     fetchPosts();
     fetchBookmarks();
@@ -107,6 +126,7 @@ const usePosts = () => {
     handlePostCreated,
     fetchPosts,
     fetchBookmarks,
+    createPost,
   };
 };
 
