@@ -8,30 +8,39 @@ import FollowerList from './components/FollowerList';
 import Feed from './components/Feed';
 import Profile from './components/Profile';
 import Bookmarks from './components/Bookmarks';
+import SocketProvider from './components/SocketProvider';
+import { ToastContainer } from 'react-toastify';
+
+export const AuthContext = React.createContext();
 
 const App = () => {
-  const { isAuthenticated, login, logout, error } = useAuth();
+  const { isAuthenticated, loading, login, logout, error } = useAuth(); // Añadir loading
+
+  if (loading) {
+    return <div>Loading...</div>; // Mostrar un mensaje de carga
+  }
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout, error }}>
-      <Router>
-        <div className="font-sans">
-        <Routes>
-          <Route path='/*' element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
-          <Route path="/" element={isAuthenticated ? <Feed /> : <Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
-          <Route path="/dashboard" element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
-          <Route path="/chat" element={isAuthenticated ? <FollowerList /> : <Navigate to="/" />} />
-          <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} />
-          <Route path='/bookmarks' element={isAuthenticated ? <Bookmarks /> : <Navigate to="/" />} />
-        </Routes>
-        </div>
-      </Router>
+      <SocketProvider> {/* Envuelve la aplicación con el SocketProvider */}
+        <Router>
+          <div className="font-sans">
+            <Routes>
+              <Route path='/*' element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
+              <Route path="/" element={isAuthenticated ? <Feed /> : <Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
+              <Route path="/dashboard" element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
+              <Route path="/chat" element={isAuthenticated ? <FollowerList /> : <Navigate to="/" />} />
+              <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} />
+              <Route path='/bookmarks' element={isAuthenticated ? <Bookmarks /> : <Navigate to="/" />} />
+            </Routes>
+          </div>
+        </Router>
+      </SocketProvider>
+      <ToastContainer />
     </AuthContext.Provider>
   );
 };
-
-export const AuthContext = React.createContext();
 
 export default App;

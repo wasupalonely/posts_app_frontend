@@ -1,24 +1,16 @@
-import { useState, useEffect, useRef } from "react";
-import io from "socket.io-client";
+import { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import StatusMessage from "./StatusMessage";
-
-const socket = io("http://localhost:3000", {
-  auth: {
-    token: localStorage.getItem("token"),
-  },
-});
+import { SocketContext } from "./SocketProvider";
+import { Bounce, toast } from "react-toastify";
 
 const ChatWindow = ({ user }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("loading");
   const messagesEndRef = useRef(null);
+  const { socket } = useContext(SocketContext);
   const authorId = JSON.parse(localStorage.getItem("user"))._id;
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   useEffect(() => {
     const fetchUserAndLoadMessages = async () => {
@@ -29,7 +21,7 @@ const ChatWindow = ({ user }) => {
           `http://localhost:3000/api/v1/chat/?user1=${user._id}&user2=${authorId}`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
           }
         );
@@ -47,23 +39,33 @@ const ChatWindow = ({ user }) => {
 
     fetchUserAndLoadMessages();
 
-    if (user && user._id) {
+    if (user && user._id && socket) {
       socket.emit("startChat", user._id);
     }
 
-    socket.on("privateMessage", (msg) => {
+    const handleMessage = (msg) => {
       console.log("🚀 ~ socket.on ~ msg:", msg);
-      setMessages((prevMessages) => [...prevMessages, msg]);
-    });
+      if (msg.sender === user._id) {
+        setMessages((prevMessages) => [...prevMessages, msg]);
+      } else {
+        setMessages((prevMessages) => [...prevMessages, msg]);
+      }
+    };
+
+    socket?.on("privateMessage", handleMessage);
 
     return () => {
-      socket.off("privateMessage");
+      socket?.off("privateMessage", handleMessage);
     };
-  }, [user, authorId]);
+  }, [user, authorId, socket]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleSendMessage = () => {
     if (message.trim() === "") return;
@@ -85,7 +87,6 @@ const ChatWindow = ({ user }) => {
             <p className="text-base font-semibold text-gray-900 dark:text-white">
               {user.username}
             </p>
-            {/* <p className="text-sm text-gray-600 dark:text-gray-400">Active now</p> */}
           </div>
         </div>
         <button className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none">
@@ -104,10 +105,7 @@ const ChatWindow = ({ user }) => {
         style={{ maxHeight: "calc(100vh - 150px)" }}
       >
         {status === "loading" && (
-          <StatusMessage
-            type="loading"
-            message="Cargando..."
-          />
+          <StatusMessage type="loading" message="Cargando..." />
         )}
         {status === "error" && (
           <StatusMessage
@@ -116,7 +114,10 @@ const ChatWindow = ({ user }) => {
           />
         )}
         {status === "empty" && (
-          <StatusMessage type="empty" message="No hay mensajes. ¡Empieza una charla!" />
+          <StatusMessage
+            type="empty"
+            message="No hay mensajes. ¡Empieza una charla!"
+          />
         )}
         {status === "success" && (
           <div>
@@ -164,7 +165,7 @@ const ChatWindow = ({ user }) => {
           className="ml-3 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none"
           onClick={handleSendMessage}
         >
-          <box-icon color="white" name='send'></box-icon>
+          <box-icon color="white" name="send"></box-icon>
         </button>
       </div>
     </div>
