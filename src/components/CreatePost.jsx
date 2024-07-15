@@ -1,14 +1,17 @@
-import axios from "axios";
+// CreatePost.jsx
 import { useState } from "react";
+import usePosts from "../hooks/usePosts";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Estado de carga
+  const { createPost } = usePosts();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -37,104 +40,105 @@ const CreatePost = ({ onPostCreated }) => {
     setIsLoading(true);
 
     try {
-      const authorId = JSON.parse(localStorage.getItem("user"))._id;
-      const formData = new FormData();
-      formData.append("content", content);
-      formData.append("images", image);
-      formData.append("authorId", authorId);
-
-      console.log("FORM DATA", formData);
-
-      const token = localStorage.getItem("authToken");
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const onUploadProgress = (progressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setUploadProgress(percentCompleted);
       };
 
-      await axios.post("http://localhost:3000/api/v1/posts", formData, config);
-
+      const post = await createPost(content, image, onUploadProgress);
       setContent("");
       setImage(null);
       setImagePreview(null);
-      setSuccessMessage("Post subido exitosamente!");
-      setErrorMessage("");
-      onPostCreated(); // Llamar a la función pasada como prop para actualizar el feed
+      onPostCreated(post);
+      toast.success('Tu post ha sido creado! 🦄', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     } catch (err) {
       console.error(err);
-      setErrorMessage("Error al subir el post, por favor intente de nuevo.");
-      setSuccessMessage("");
+      toast.error('Error al crear el post 😢', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     } finally {
-      setIsLoading(false); // Desactivar estado de carga
+      setIsLoading(false);
     }
   };
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        className="bg-gray-800 shadow-md rounded-lg p-4 mb-4"
-      >
-        <h2 className="text-lg font-bold text-white mb-2">
-          Publicar un nuevo post
-        </h2>
-        <textarea
-          className="w-full border border-gray-600 rounded-md p-2 mb-2 text-white bg-gray-700"
-          placeholder="Escribe tu mensaje..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          rows="3"
-          disabled={isLoading} // Deshabilitar mientras está cargando
-        ></textarea>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-gray-800 shadow-md rounded-lg p-4 mb-4"
+    >
+      <h2 className="text-lg font-bold text-white mb-2">
+        Publicar un nuevo post
+      </h2>
+      <textarea
+        className="w-full border border-gray-600 rounded-md p-2 mb-2 text-white bg-gray-700"
+        placeholder="Escribe tu mensaje..."
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        rows="3"
+        disabled={isLoading}
+      ></textarea>
 
-        <div className="flex items-center space-x-2">
-          <div className="relative cursor-pointer" onClick={handleImageClick}>
-            {imagePreview ? (
-              <div className="relative">
-                <img
-                  src={imagePreview}
-                  alt="Previsualización"
-                  className="w-32 h-32 object-cover rounded mb-2"
-                />
-                <button
-                  onClick={handleImageRemove}
-                  className="absolute top-0 right-0 text-white rounded-full p-1"
-                  disabled={isLoading} // Deshabilitar mientras está cargando
-                >
-                  ✕
-                </button>
-              </div>
-            ) : (
-              <box-icon
-                type="solid"
-                color="white"
-                name="image-add"
-                size="md"
-              ></box-icon>
-            )}
-          </div>
-
-          <input
-            id="imageInput"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-            disabled={isLoading}
-          />
-
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-300"
-            disabled={isLoading}
-          >
-            {isLoading ? "Cargando..." : "Publicar"}
-          </button>
+      <div className="flex items-center space-x-2 justify-between">
+        <div className="relative cursor-pointer" onClick={handleImageClick}>
+          {imagePreview ? (
+            <div className="relative">
+              <img
+                src={imagePreview}
+                alt="Previsualización"
+                className="w-32 h-32 object-cover rounded mb-2"
+              />
+              <button
+                onClick={handleImageRemove}
+                className="absolute top-[-8px] right-[-8px] bg-white text-black rounded-full p-1 flex items-center justify-center w-6 h-6"
+                disabled={isLoading}
+              >
+                <box-icon name="x" size="sm" color="black"></box-icon>
+              </button>
+            </div>
+          ) : (
+            <box-icon
+              type="solid"
+              color="white"
+              name="image-add"
+              size="md"
+            ></box-icon>
+          )}
         </div>
-        {successMessage && <p className="text-green-500">{successMessage}</p>}
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-      </form>
-    </>
+
+        <input
+          id="imageInput"
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="hidden"
+          disabled={isLoading}
+        />
+
+        <button
+          type="submit"
+          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+          disabled={isLoading}
+        >
+          {isLoading ? `Subiendo post...` : "Publicar"}
+        </button>
+      </div>
+    </form>
   );
 };
 

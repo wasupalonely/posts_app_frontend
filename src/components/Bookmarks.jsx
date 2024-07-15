@@ -1,26 +1,16 @@
 import { useEffect, useState } from "react";
-import Header from "./Header";
-import CreatePost from "./CreatePost";
-import PostsList from "./PostsList";
 import Sidebar from "./Sidebar";
+import PostsList from "./PostsList";
 import usePosts from "../hooks/usePosts";
+import Header from "./Header";
 
-const Feed = () => {
+const Bookmarks = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const {
-    posts,
-    handleDeletePost,
-    handleLikePost,
-    handleBookmarkPost,
-    handlePostCreated,
-    loading,
-    error,
-    fetchPosts,
-  } = usePosts();
+  const { bookmarks, loading, error, fetchBookmarks, handleBookmarkPost, handleLikePost } = usePosts();
 
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+    fetchBookmarks();
+  }, [fetchBookmarks]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -28,7 +18,7 @@ const Feed = () => {
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} section={"home"} />
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} section={"bookmarks"} />
       <div className="flex-1 flex flex-col lg:ml-64">
         <header className="flex items-center justify-between px-4 py-3 bg-gray-800 text-white lg:hidden">
           <button onClick={toggleSidebar} className="text-white">
@@ -51,20 +41,13 @@ const Feed = () => {
         <main className="flex-1 overflow-y-auto">
           <Header />
           <div className="p-4">
-            <CreatePost onPostCreated={handlePostCreated} />
-            <PostsList
-              posts={posts}
-              loading={loading}
-              error={error}
-              handleDeletePost={handleDeletePost}
-              handleLikePost={handleLikePost}
-              handleBookmarkPost={handleBookmarkPost}
-            />
+          <PostsList loading={loading} error={error} posts={bookmarks} handleBookmarkPost={handleBookmarkPost} handleLikePost={handleLikePost} />
           </div>
         </main>
       </div>
+      
     </div>
   );
 };
 
-export default Feed;
+export default Bookmarks;
