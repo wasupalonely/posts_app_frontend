@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import useAuth from './hooks/useAuth';
 import Login from './components/Login';
 import ForgotPassword from './components/ForgotPassword'
+import ResetPassword from "./components/ResetPassword"
 import Register from './components/Register';
 import Home from './components/Home';
 import FollowerList from './components/FollowerList';
@@ -30,6 +31,7 @@ const App = () => {
               <Route path='/*' element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
               <Route path="/" element={isAuthenticated ? <Feed /> : <Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/change-password" element={<ResetPassword />} />
               <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
               <Route path="/dashboard" element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
               <Route path="/chat" element={isAuthenticated ? <FollowerList /> : <Navigate to="/" />} />
