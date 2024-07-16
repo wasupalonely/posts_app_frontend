@@ -1,6 +1,7 @@
-// Post.jsx
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import StatusMessage from "./StatusMessage";
 
 const Post = ({
   post,
@@ -9,11 +10,69 @@ const Post = ({
   handleLikePost,
   handleBookmarkPost,
   handleDeletePost,
-  handleFollowUser,
+  handleAddComment,
 }) => {
   const dummyImage = "https://via.placeholder.com/150";
   const isLiked = post.likes.includes(id);
-  const isFollowing = user?.followers?.includes(id);
+  const me = JSON.parse(localStorage.getItem("user"));
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showComments, setShowComments] = useState(false);
+
+  const handleCommentChange = (e) => {
+    setComment(e.target.value);
+  };
+
+  const getComments = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/v1/comments/post/${post._id}`
+      );
+      const data = await response.data;
+      setComments(data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (comment.trim()) {
+      try {
+        await handleAddComment(post._id, comment);
+        setComment("");
+        setComments([
+          ...comments,
+          {
+            content: comment,
+            authorUsername: me.username,
+          },
+        ]);
+        toast.success("Comentario agregado!");
+      } catch (err) {
+        toast.error("Error al agregar el comentario");
+      }
+    } else {
+      toast.error("El comentario no puede estar vacío");
+    }
+  };
+
+  const toggleComments = () => {
+    setShowComments(!showComments);
+  };
+
+  useEffect(() => {
+    getComments();
+  }, []);
+
+  if (loading)
+    return (
+      <div className="bg-gray-800 shadow-md rounded-lg p-4 mb-4">
+        <StatusMessage type="loading" message="Cargando..." />
+      </div>
+    );
 
   return (
     <div className="bg-gray-800 shadow-md rounded-lg p-4 mb-4">
@@ -24,18 +83,6 @@ const Post = ({
           className="w-10 h-10 rounded-full mr-2"
         />
         <p className="text-white">{user?.username || "Unknown"}</p>
-        {/* {user?._id !== id && (
-          <button
-            onClick={() => handleFollowUser(user._id)}
-            className={`ml-3 px-4 py-2 font-semibold rounded-full focus:outline-none transition-colors duration-300 ${
-              isFollowing
-                ? "bg-gray-200 text-black hover:bg-gray-300"
-                : "bg-blue-500 text-white hover:bg-blue-600"
-            }`}
-          >
-            {isFollowing ? "Siguiendo" : "Seguir"}
-          </button>
-        )} */}
       </div>
       <p className="text-white">{post.content}</p>
       {post.media && post.media.length > 0 && (
@@ -64,7 +111,7 @@ const Post = ({
               color={isLiked ? "red" : "white"}
             ></box-icon>
           </button>
-
+          <p className="text-white">{post.likes.length}</p>
           <button
             onClick={() => handleBookmarkPost(post._id)}
             className="text-white hover:text-blue-500 focus:outline-none"
@@ -75,6 +122,18 @@ const Post = ({
               color={post.bookmarks.includes(id) ? "yellow" : "white"}
             ></box-icon>
           </button>
+          <p className="text-white">{post.bookmarks.length}</p>
+          <button
+            onClick={toggleComments}
+            className="text-white hover:text-green-500 focus:outline-none"
+          >
+            <box-icon
+              name="comment"
+              type="regular"
+              color={showComments ? "green" : "white"}
+            ></box-icon>
+          </button>
+          <p className="text-white">{comments.length}</p>
         </div>
       </div>
 
@@ -91,6 +150,39 @@ const Post = ({
           </button>
         )}
       </div>
+
+      {showComments && (
+        <div className="mt-4">
+          <h3 className="text-white text-lg mb-2">Comentarios</h3>
+          {comments.length > 0 ? (
+            comments.map((comment, index) => (
+              <div key={index} className="mb-2">
+                <p className="text-gray-300 text-sm">
+                  <strong>{comment.authorUsername}:</strong> {comment.content}
+                </p>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-sm">No hay comentarios.</p>
+          )}
+
+          <form onSubmit={handleCommentSubmit} className="mt-2">
+            <input
+              type="text"
+              className="w-full border border-gray-600 rounded-md p-2 mb-2 text-white bg-gray-700"
+              placeholder="Escribe un comentario..."
+              value={comment}
+              onChange={handleCommentChange}
+            />
+            <button
+              type="submit"
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+            >
+              Comentar
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

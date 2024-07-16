@@ -28,7 +28,10 @@ const usePosts = () => {
 
   const fetchBookmarks = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/v1/posts/${id}/bookmarks`, config);
+      const res = await axios.get(
+        `http://localhost:3000/api/v1/posts/${id}/bookmarks`,
+        config
+      );
       setBookmarks(res.data);
     } catch (err) {
       setError(err);
@@ -39,7 +42,10 @@ const usePosts = () => {
 
   const handleDeletePost = async (postId) => {
     try {
-      await axios.delete(`http://localhost:3000/api/v1/posts/${postId}`, config);
+      await axios.delete(
+        `http://localhost:3000/api/v1/posts/${postId}`,
+        config
+      );
       setPosts(posts.filter((post) => post._id !== postId));
     } catch (err) {
       setError(err);
@@ -48,7 +54,11 @@ const usePosts = () => {
 
   const handleLikePost = async (postId) => {
     try {
-      await axios.post(`http://localhost:3000/api/v1/posts/${postId}/like`, { userId: id }, config);
+      await axios.post(
+        `http://localhost:3000/api/v1/posts/${postId}/like`,
+        { userId: id },
+        config
+      );
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post._id === postId
@@ -68,7 +78,11 @@ const usePosts = () => {
 
   const handleBookmarkPost = async (postId) => {
     try {
-      await axios.post(`http://localhost:3000/api/v1/users/${id}/bookmark`, { postId }, config);
+      await axios.post(
+        `http://localhost:3000/api/v1/users/${id}/bookmark`,
+        { postId },
+        config
+      );
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post._id === postId
@@ -87,6 +101,30 @@ const usePosts = () => {
     }
   };
 
+  const handleAddComment = async (postId, comment) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/api/v1/comments`,
+        {
+          postId,
+          content: comment,
+          authorId: id,
+        },
+        config
+      );
+      const updatedPost = response.data;
+
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => (post._id === postId ? updatedPost : post))
+      );
+
+      return updatedPost;
+    } catch (err) {
+      setError(err);
+      throw err;
+    }
+  };
+
   const handlePostCreated = (post) => {
     setPosts((prevPosts) => [post.data, ...prevPosts]);
   };
@@ -101,7 +139,11 @@ const usePosts = () => {
     }
 
     try {
-      const post = await axios.post("http://localhost:3000/api/v1/posts", formData, config);
+      const post = await axios.post(
+        "http://localhost:3000/api/v1/posts",
+        formData,
+        config
+      );
       handlePostCreated(post);
       return post;
     } catch (err) {
@@ -123,6 +165,7 @@ const usePosts = () => {
     handleDeletePost,
     handleLikePost,
     handleBookmarkPost,
+    handleAddComment, // Añadimos la función al retorno del hook
     handlePostCreated,
     fetchPosts,
     fetchBookmarks,

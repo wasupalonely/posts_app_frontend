@@ -5,6 +5,7 @@ import StatusMessage from "./StatusMessage";
 import Post from "./Post";
 import axios from "axios";
 import { toast } from "react-toastify";
+import usePosts from "../hooks/usePosts";
 
 const PostsList = ({
   posts,
@@ -15,6 +16,7 @@ const PostsList = ({
   error,
 }) => {
   const [users, setUsers] = useState({});
+  const { handleAddComment } = usePosts();
   const dummyImage = "https://via.placeholder.com/150";
   const id = JSON.parse(localStorage.getItem("user"))._id;
 
@@ -108,6 +110,7 @@ const PostsList = ({
             handleBookmarkPost={handleBookmarkPost}
             handleDeletePost={handleDeletePost}
             handleFollowUser={handleFollowUser}
+            handleAddComment={handleAddComment}
           />
         ))
       )}
