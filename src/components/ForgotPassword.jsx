@@ -15,7 +15,7 @@ const ForgotPassword = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:3000/api/v1/auth/forgot-password', {
+      const response = await fetch('http://localhost:3000/api/v1/auth/recovery', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
