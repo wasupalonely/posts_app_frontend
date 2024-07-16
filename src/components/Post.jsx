@@ -3,6 +3,9 @@ import axios from "axios";
 import Modal from 'react-modal';
 import { toast } from "react-toastify";
 import StatusMessage from "./StatusMessage";
+import { useNavigate } from "react-router-dom";
+
+
 
 const Post = ({
   post,
@@ -22,6 +25,7 @@ const Post = ({
   const [showComments, setShowComments] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const navigate = useNavigate();
 
   const handleCommentChange = (e) => {
     setComment(e.target.value);
@@ -112,7 +116,9 @@ const Post = ({
           alt={`${user?.username || "Unknown"}'s avatar`}
           className="w-10 h-10 rounded-full mr-2"
         />
-        <p className="text-white">{user?.username || "Unknown"}</p>
+        <div onClick={() => navigate(`/profile/${user._id}`)} className="cursor-pointer" >
+          <p className="text-white" >{user?.username || "Unknown"}</p>
+        </div>
       </div>
       <p className="text-white">{post.content}</p>
       {post.media && post.media.length > 0 && (

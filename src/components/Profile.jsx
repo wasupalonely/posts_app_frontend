@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getUserById } from '../api/users';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Modal from 'react-modal';
 import { ClipLoader } from 'react-spinners'; // Importa el spinner
 
@@ -28,18 +28,52 @@ const useUser = (userId) => {
     }
   }, [userId]);
 
-  return { user, loading, error };
+  return { user, loading, error, setUser};
 };
 
 const Profile = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const {userId} = useParams()
   const navigate = useNavigate();
-  const userId = JSON.parse(localStorage.getItem("user"))?._id;
-  const { user, loading, error } = useUser(userId);
-
+  const myId = JSON.parse(localStorage.getItem("user"))?._id;
+  const { user, loading, error, setUser } = useUser(userId);
+  const isFollowing = user.followers.includes(myId)
+  
   const handleImageClick = useCallback((imageUrl) => {
     setSelectedImage(imageUrl);
   }, []);
+
+  const handleFollowUser = async (authorId) => {
+    try {
+      const response = await axios.post(`http://localhost:3000/api/v1/users/${authorId}/toggle-follow`, {userId: id}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+      });
+      const updatedUser = response.data;
+      setUser(updatedUser)
+      toast.success('Seguido! 🦄', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } catch (error) {
+      console.error("Error al seguir al usuario:", error);
+      toast.error('Error al seguir al usuario 😢', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -80,12 +114,18 @@ const Profile = () => {
             >
               Editar Perfil
             </button>
-            <button
-              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
-              onClick={() => console.log('Follow/Unfollow')}
-            >
-              Seguir
-            </button>
+           {user?._id !== myId && (
+          <button
+            onClick={() => handleFollowUser(user._id)}
+            className={`ml-3 px-4 py-2 font-semibold rounded-full focus:outline-none transition-colors duration-300 ${
+              isFollowing
+                ? "bg-gray-200 text-black hover:bg-gray-300"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+            }`}
+          >
+            {isFollowing ? "Siguiendo" : "Seguir"}
+          </button>
+        )} 
             <button
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center"
               onClick={() => navigate(-1)}

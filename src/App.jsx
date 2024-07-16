@@ -35,7 +35,7 @@ const App = () => {
               <Route path="/dashboard" element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
               <Route path="/chat" element={isAuthenticated ? <FollowerList /> : <Navigate to="/" />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} />
+              <Route path="/profile/:userId" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} />
               <Route path="/bookmarks" element={isAuthenticated ? <Bookmarks /> : <Navigate to="/" />} />
               
               {/* Ruta para restablecer la contraseña con el token */}
