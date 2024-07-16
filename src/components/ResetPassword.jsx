@@ -1,32 +1,34 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+const ResetPassword = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const token = new URLSearchParams(location.search).get('token'); // Obtener el token de la URL
+
+  const [newPassword, setNewPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const handleForgotPassword = async (e) => {
+  const handleChangePassword = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    setMessage('');
 
     try {
-      const response = await fetch('http://localhost:3000/api/v1/auth/recovery', {
+      const response = await fetch('http://localhost:3000/api/v1/auth/change-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ token, newPassword }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setMessage('Si existe una cuenta con este correo, recibirás un enlace para restablecer tu contraseña.');
+        // Redirigir a una página de éxito o a la página de inicio de sesión
+        navigate('/login');
       } else {
         setError(data.message || 'Algo salió mal. Por favor, inténtalo de nuevo.');
       }
@@ -41,21 +43,20 @@ const ForgotPassword = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4">
       <div className="p-6 sm:p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md">
         <div className="mb-6 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold dark:text-white">Recuperar Contraseña</h2>
-          <p className="text-gray-600 dark:text-gray-400">Ingresa tu correo electrónico para recibir instrucciones</p>
+          <h2 className="text-2xl sm:text-3xl font-bold dark:text-white">Cambiar Contraseña</h2>
+          <p className="text-gray-600 dark:text-gray-400">Ingresa tu nueva contraseña</p>
         </div>
-        {message && <p className="text-green-500 dark:text-green-400">{message}</p>}
         {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
-        <form onSubmit={handleForgotPassword}>
+        <form onSubmit={handleChangePassword}>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-bold mb-2 dark:text-gray-300">Correo electrónico</label>
+            <label htmlFor="newPassword" className="block text-sm font-bold mb-2 dark:text-gray-300">Nueva Contraseña</label>
             <input
-              id="email"
+              id="newPassword"
               className="w-full px-3 py-2 sm:px-4 sm:py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-300"
-              type="email"
-              placeholder="Escribe tu correo electrónico"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="password"
+              placeholder="Escribe tu nueva contraseña"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
               required
             />
           </div>
@@ -64,20 +65,12 @@ const ForgotPassword = () => {
             className="w-full px-3 py-2 sm:px-4 sm:py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-300"
             disabled={isLoading}
           >
-            {isLoading ? 'Enviando...' : 'Enviar'}
+            {isLoading ? 'Cambiando...' : 'Cambiar Contraseña'}
           </button>
         </form>
-        <div className="mt-6 text-center">
-          <p className="text-gray-600 dark:text-gray-400">
-            ¿Recordaste tu contraseña?{' '}
-            <a href="/login" className="text-blue-500 hover:underline dark:text-blue-300">
-              Iniciar sesión
-            </a>
-          </p>
-        </div>
       </div>
     </div>
   );
 };
 
-export default ForgotPassword;
+export default ResetPassword;
