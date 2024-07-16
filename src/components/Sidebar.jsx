@@ -25,7 +25,7 @@ const Sidebar = ({ isOpen, toggleSidebar, section }) => {
       <div
         className={`fixed inset-y-0 left-0 w-64 bg-gray-900 text-white transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform lg:translate-x-0 lg:flex lg:flex-col lg:w-64 lg:bg-gray-800 lg:overflow-y-auto z-50`}
+        } transition-transform lg:translate-x-0 lg:flex lg:flex-col lg:w-64 lg:bg-gray-800 lg:overflow-y-auto`}
       >
         <div className="flex items-center justify-between px-4 py-3 lg:py-4 bg-gray-900 lg:bg-gray-800">
           <button onClick={toggleSidebar} className="text-white lg:hidden">
