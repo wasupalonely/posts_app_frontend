@@ -6,6 +6,7 @@ const usePosts = () => {
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [postsStatus, setPostsStatus] = useState("loading");
   const id = JSON.parse(localStorage.getItem("user"))._id;
 
   const token = localStorage.getItem("authToken");
@@ -18,8 +19,12 @@ const usePosts = () => {
   const fetchPosts = useCallback(async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/v1/posts", config);
+      if (res.data.length === 0) {
+        setPostsStatus("empty");
+      }
       setPosts(res.data);
     } catch (err) {
+      setPostsStatus("error");
       setError(err);
     } finally {
       setLoading(false);
@@ -162,10 +167,11 @@ const usePosts = () => {
     bookmarks,
     loading,
     error,
+    postsStatus,
     handleDeletePost,
     handleLikePost,
     handleBookmarkPost,
-    handleAddComment, // Añadimos la función al retorno del hook
+    handleAddComment,
     handlePostCreated,
     fetchPosts,
     fetchBookmarks,

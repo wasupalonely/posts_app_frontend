@@ -1,3 +1,4 @@
+// App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import useAuth from './hooks/useAuth';
@@ -28,7 +29,6 @@ const App = () => {
         <Router>
           <div className="font-sans">
             <Routes>
-              <Route path='/*' element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
               <Route path="/" element={isAuthenticated ? <Feed /> : <Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
@@ -36,10 +36,13 @@ const App = () => {
               <Route path="/chat" element={isAuthenticated ? <FollowerList /> : <Navigate to="/" />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} />
-              <Route path='/bookmarks' element={isAuthenticated ? <Bookmarks /> : <Navigate to="/" />} />
+              <Route path="/bookmarks" element={isAuthenticated ? <Bookmarks /> : <Navigate to="/" />} />
               
               {/* Ruta para restablecer la contraseña con el token */}
-              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path="/recovery" element={<ResetPassword />} />
+              
+              {/* Ruta para manejar cualquier otra URL */}
+              <Route path='/*' element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
             </Routes>
           </div>
         </Router>

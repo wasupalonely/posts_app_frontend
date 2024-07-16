@@ -1,8 +1,8 @@
 // CreatePost.jsx
 import { useState } from "react";
 import usePosts from "../hooks/usePosts";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
@@ -41,7 +41,9 @@ const CreatePost = ({ onPostCreated }) => {
 
     try {
       const onUploadProgress = (progressEvent) => {
-        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
         setUploadProgress(percentCompleted);
       };
 
@@ -50,7 +52,7 @@ const CreatePost = ({ onPostCreated }) => {
       setImage(null);
       setImagePreview(null);
       onPostCreated(post);
-      toast.success('Tu post ha sido creado! 🦄', {
+      toast.success("Tu post ha sido creado! 🦄", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -62,7 +64,7 @@ const CreatePost = ({ onPostCreated }) => {
       });
     } catch (err) {
       console.error(err);
-      toast.error('Error al crear el post 😢', {
+      toast.error("Error al crear el post 😢", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -86,7 +88,7 @@ const CreatePost = ({ onPostCreated }) => {
         Publicar un nuevo post
       </h2>
       <textarea
-        className="w-full border border-gray-600 rounded-md p-2 mb-2 text-white bg-gray-700"
+        className="w-full border border-gray-600 rounded-md p-2 mb-2 text-white bg-gray-700 resize-none"
         placeholder="Escribe tu mensaje..."
         value={content}
         onChange={(e) => setContent(e.target.value)}

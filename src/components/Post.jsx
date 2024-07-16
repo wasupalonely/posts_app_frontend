@@ -1,5 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Modal from 'react-modal';
 import { toast } from "react-toastify";
 import StatusMessage from "./StatusMessage";
 
@@ -19,6 +20,8 @@ const Post = ({
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showComments, setShowComments] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const handleCommentChange = (e) => {
     setComment(e.target.value);
@@ -50,17 +53,44 @@ const Post = ({
             authorUsername: me.username,
           },
         ]);
-        toast.success("Comentario agregado!");
       } catch (err) {
-        toast.error("Error al agregar el comentario");
+        toast.error('Error al crear el comentario 😢', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
       }
     } else {
-      toast.error("El comentario no puede estar vacío");
+      toast.error('El comentario no puede estar vacío', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
   const toggleComments = () => {
     setShowComments(!showComments);
+  };
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setSelectedImage(null);
   };
 
   useEffect(() => {
@@ -92,7 +122,8 @@ const Post = ({
               key={index}
               src={media}
               alt={`Media ${index}`}
-              className="max-w-full h-auto rounded-md max-h-64"
+              className="max-w-full h-auto rounded-md max-h-64 cursor-pointer"
+              onClick={() => openModal(media)}
             />
           ))}
         </div>
@@ -183,6 +214,26 @@ const Post = ({
           </form>
         </div>
       )}
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Imagen Grande"
+        className="fixed inset-0 flex items-center justify-center z-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-75 z-40"
+      >
+        <div className="relative bg-gray-900 rounded-lg overflow-hidden shadow-lg max-w-4xl w-full max-h-screen z-50">
+          <button onClick={closeModal} className="absolute top-2 right-2 text-white text-xl z-50">
+            &times;
+          </button>
+          <img
+            src={selectedImage}
+            alt="Imagen Grande"
+            className="w-full h-auto object-contain z-50"
+            style={{ maxHeight: '90vh' }}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };
