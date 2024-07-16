@@ -2,6 +2,9 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../App";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/PostAppIcon.svg"; // Ruta al archivo SVG en assets
+import Sidebar from "./Sidebar";
+
+
 
 const Header = () => {
   const navigate = useNavigate();
@@ -17,15 +20,38 @@ const Header = () => {
     navigate("/");
   };
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div>
-      <header className="bg-gray-800 shadow-md p-4 flex items-center justify-between">
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} section={"home"} />
+      <header className="bg-gray-800 shadow-md p-4 flex justify-between">
+        <div className="flex">
         {/* Logo e nombre de la app */}
-        <div className="flex items-center space-x-2">
-          <img src={Logo} alt="Logo" className="h-8 w-8" />
-          <h1 className="text-xl font-bold text-white">PostApp</h1>
+          <button onClick={toggleSidebar} className="text-white lg:hidden">
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>  
+          <div className="flex items-center space-x-2 ml-2">
+            <img src={Logo} alt="Logo" className="h-8 w-8" />
+            <h1 className="text-xl font-bold text-white">PostApp</h1>
+          </div>
         </div>
-
         <div className="flex items-center space-x-4">
 
           <div className="relative">
