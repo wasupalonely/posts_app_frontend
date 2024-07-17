@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from 'react-modal';
+import Skeleton from "react-loading-skeleton";
 import { toast } from "react-toastify";
 import StatusMessage from "./StatusMessage";
 import { useNavigate } from "react-router-dom";
-
-
 
 const Post = ({
   post,
@@ -116,8 +115,10 @@ const Post = ({
           alt={`${user?.username || "Unknown"}'s avatar`}
           className="w-10 h-10 rounded-full mr-2"
         />
-        <div onClick={() => navigate(`/profile/${user._id}`)} className="cursor-pointer" >
-          <p className="text-white" >{user?.username || "Unknown"}</p>
+        <div onClick={() => navigate(`/profile/${user?._id || "#"}`)} className="cursor-pointer" >
+          <p className="text-white">
+            {user ? user.username : <Skeleton width={100} />}
+          </p>
         </div>
       </div>
       <p className="text-white">{post.content}</p>

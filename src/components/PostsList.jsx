@@ -6,6 +6,8 @@ import Post from "./Post";
 import axios from "axios";
 import { toast } from "react-toastify";
 import usePosts from "../hooks/usePosts";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const PostsList = ({
   posts,
@@ -46,45 +48,6 @@ const PostsList = ({
     fetchUsers();
   }, [posts]);
 
-  const handleFollowUser = async (authorId) => {
-    try {
-      const response = await axios.post(`http://localhost:3000/api/v1/users/${authorId}/toggle-follow`, {userId: id}, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
-      });
-      const updatedUser = response.data;
-
-      setUsers((prevUsers) => ({
-        ...prevUsers,
-        [authorId]: {
-          ...prevUsers[authorId],
-          followers: updatedUser.followers,
-        },
-      }));
-      toast.success('Seguido! 🦄', {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    } catch (error) {
-      console.error("Error al seguir al usuario:", error);
-      toast.error('Error al seguir al usuario 😢', {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    }
-  };
-
   return (
     <>
       {posts.length === 0 ? (
@@ -109,7 +72,6 @@ const PostsList = ({
             handleLikePost={handleLikePost}
             handleBookmarkPost={handleBookmarkPost}
             handleDeletePost={handleDeletePost}
-            handleFollowUser={handleFollowUser}
             handleAddComment={handleAddComment}
           />
         ))
