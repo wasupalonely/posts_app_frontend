@@ -8,7 +8,7 @@ const usePosts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [postsStatus, setPostsStatus] = useState("loading");
-  const me = JSON.parse(localStorage.getItem("user"))
+  const me = JSON.parse(localStorage.getItem("user"));
   const id = JSON.parse(localStorage.getItem("user"))._id;
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -20,27 +20,24 @@ const usePosts = () => {
     },
   };
 
-  const fetchPosts = useCallback(
-    async (page = 1) => {
-      setLoading(true);
-      try {
-        const res = await axios.get(
-          `http://localhost:3000/api/v1/posts?page=${page}&limit=10`,
-          config
-        );
-        setPosts((prevPosts) => {
-          if (page === 1) return res.data;
-          return [...prevPosts, ...res.data];
-        });
-        setHasMore(res.data.length > 0); // Si no hay más datos, hasMore será false
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+  const fetchPosts = useCallback(async (page = 1) => {
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/api/v1/posts?page=${page}&limit=10`,
+        config
+      );
+      setPosts((prevPosts) => {
+        if (page === 1) return res.data;
+        return [...prevPosts, ...res.data];
+      });
+      setHasMore(res.data.length > 0); // Si no hay más datos, hasMore será false
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const loadMorePosts = () => {
     if (hasMore) {
@@ -80,8 +77,8 @@ const usePosts = () => {
 
   const handleLikePost = async (postId) => {
     try {
-      const ṕost = posts.find((post) => post._id === postId);
-      const author = await getUserById(ṕost.authorId);
+      const post = posts.find((post) => post._id === postId);
+      const author = await getUserById(post.authorId);
       await axios.post(
         `http://localhost:3000/api/v1/posts/${postId}/like`,
         { userId: id },
@@ -105,18 +102,17 @@ const usePosts = () => {
         content: `${author.username}, tienes un nuevo like en tu post!`,
         type: "like",
         from: id,
-        to: ṕost.authorId,
+        to: post.authorId,
         metadata: {
           postId,
-        }
-      }
+        },
+      };
 
       await axios.post(
         "http://localhost:3000/api/v1/notifications",
         notification,
         config
       );
-
     } catch (err) {
       setError(err);
     }
@@ -148,6 +144,8 @@ const usePosts = () => {
   };
 
   const handleAddComment = async (postId, comment) => {
+    const post = posts.find((post) => post._id === postId);
+    const author = await getUserById(post.authorId);
     try {
       const response = await axios.post(
         `http://localhost:3000/api/v1/comments`,
@@ -162,6 +160,23 @@ const usePosts = () => {
 
       setPosts((prevPosts) =>
         prevPosts.map((post) => (post._id === postId ? updatedPost : post))
+      );
+
+      const notification = {
+        title: `${me.username} ha comentado tu post!`,
+        content: comment,
+        type: "comment",
+        from: id,
+        to: post.authorId,
+        metadata: {
+          postId,
+        },
+      };
+
+      await axios.post(
+        "http://localhost:3000/api/v1/notifications",
+        notification,
+        config
       );
 
       return updatedPost;

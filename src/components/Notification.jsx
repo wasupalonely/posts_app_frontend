@@ -1,10 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { updateNotificationVisibility } from "../api/notification";
 
-const Notification = ({ title, content, seen, type, from, to, metadata }) => {
+const Notification = ({ title, content, seen, type, from, id, metadata }) => {
   const navigation = useNavigate();
 
-  const handleNotificationsNavigation = () => {
+  const handleNotificationsNavigation = async () => {
+    await updateNotificationVisibility(id)
     switch (type) {
       case "follow":
         navigation(`/profile/${from}`);

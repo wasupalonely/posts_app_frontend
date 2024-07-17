@@ -15,6 +15,7 @@ const Post = ({
   handleDeletePost,
   handleAddComment,
 }) => {
+  console.log("🚀 ~ post:", user)
   const dummyImage = "https://via.placeholder.com/150";
   const isLiked = post.likes.includes(id);
   const me = JSON.parse(localStorage.getItem("user"));
