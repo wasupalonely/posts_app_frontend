@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { updateUsers } from "../api/users";
 
 const EditProfile = () => {
   const [user, setUser] = useState({
@@ -14,6 +15,8 @@ const EditProfile = () => {
   });
   const { userId } = useParams();
   const navigate = useNavigate();
+
+  const myId = JSON.parse(localStorage.getItem("user"))?._id;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -45,6 +48,13 @@ const EditProfile = () => {
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
+
+  const handleUpdateUser = async () => {
+    const {username, bio, email} = user
+    console.log("camilq",user)
+    await updateUsers(myId, {username, bio ,email})
+    navigate(`/profile/${myId}`)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -85,23 +95,11 @@ const EditProfile = () => {
       <form onSubmit={handleSubmit} className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 sm:p-8">
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mb-4">Editar Perfil</h2>
         <div className="mb-4">
-          <label htmlFor="name" className="block text-gray-700 dark:text-gray-300">
-            Nombre:
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={user.name}
-            onChange={handleChange}
-            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-          />
-        </div>
-        <div className="mb-4">
           <label htmlFor="username" className="block text-gray-700 dark:text-gray-300">
             Nombre de usuario:
           </label>
           <input
+
             type="text"
             id="username"
             name="username"
@@ -135,40 +133,17 @@ const EditProfile = () => {
             className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
           ></textarea>
         </div>
-        <div className="mb-4">
-          <label htmlFor="website" className="block text-gray-700 dark:text-gray-300">
-            Website:
-          </label>
-          <input
-            type="url"
-            id="website"
-            name="website"
-            value={user.website}
-            onChange={handleChange}
-            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="profilePicture" className="block text-gray-700 dark:text-gray-300">
-            URL de la imagen de perfil:
-          </label>
-          <input
-            type="url"
-            id="profilePicture"
-            name="profilePicture"
-            value={user.profilePicture}
-            onChange={handleChange}
-            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-          />
-        </div>
         <div className="flex space-x-4">
-          <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+          <button 
+          type="submit" 
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+          onClick={handleUpdateUser}>
             Guardar Cambios
           </button>
           <button
             type="button"
-            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
-            onClick={() => navigate(`/profile/${userId}`)}
+            className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-md"
+            onClick={() => navigate(-1)}
           >
             Cancelar
           </button>

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "react-modal";
 import { ClipLoader } from "react-spinners";
@@ -16,8 +16,6 @@ const Profile = () => {
   const myId = JSON.parse(localStorage.getItem("user"))?._id;
 
   const { user, loading, error, setUser } = useUsers(userId);
-  console.log("🚀 ~ Profile ~ user:", user);
-  console.log("🚀 ~ Profile ~ userId:", userId);
 
   const isFollowing = user?.followers?.includes(myId);
 
@@ -99,6 +97,40 @@ const Profile = () => {
     }
   };
 
+  useEffect(() => {
+    // Fetch posts for current user (me)
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/posts/author/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+        setUser((prevUser) => ({
+          ...prevUser,
+          posts: response.data,
+        }));
+      } catch (error) {
+        console.error("Error al cargar los posts del usuario:", error);
+        toast.error("Error al cargar los posts del usuario 😢", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    };
+
+    fetchPosts();
+  }, [userId, setUser]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -157,7 +189,7 @@ const Profile = () => {
             {user?._id === myId && (
               <button
                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full"
-                onClick={() => navigate("/edit-profile")}
+                onClick={() => navigate(`/edit-profile/${userId}`)}
               >
                 Editar Perfil
               </button>
@@ -223,14 +255,20 @@ const Profile = () => {
             user.posts.map((post, index) => (
               <div
                 key={index}
-                className="cursor-pointer relative"
+                className="cursor-pointer relative rounded-lg overflow-hidden"
                 onClick={() => handleImageClick(post.imageUrl)}
               >
-                <img
-                  src={post.imageUrl}
-                  alt={`Post ${index + 1}`}
-                  className="w-full h-32 sm:h-48 object-cover rounded-lg"
-                />
+                {post.media.length > 0 ? (
+                  <img
+                    src={post.media[0]}
+                    alt={`Post ${index + 1}`}
+                    className="w-full h-32 sm:h-48 object-cover rounded-lg"
+                  />
+                ) : (
+                  <div className="w-full h-32 sm:h-48 bg-gray-200 flex items-center justify-center text-gray-400">
+                    No hay imagen
+                  </div>
+                )}
                 <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 flex justify-between items-center">
                   <span>{post.likes} Me gusta</span>
                   <span>{post.comments} Comentarios</span>
@@ -239,29 +277,18 @@ const Profile = () => {
             ))}
         </div>
 
-        {selectedImage && (
-          <Modal
-            isOpen={true}
-            onRequestClose={() => setSelectedImage(null)}
-            contentLabel="Selected Image"
-            className="flex items-center justify-center"
-            overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-          >
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
-              <img
-                src={selectedImage}
-                alt="Selected"
-                className="max-w-full max-h-full"
-              />
-              <button
-                className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
-                onClick={() => setSelectedImage(null)}
-              >
-                Cerrar
-              </button>
-            </div>
-          </Modal>
-        )}
+        <Modal
+          isOpen={selectedImage !== null}
+          onRequestClose={() => setSelectedImage(null)}
+          className="absolute inset-0 flex items-center justify-center"
+          overlayClassName="absolute inset-0 bg-black bg-opacity-75"
+        >
+          <img
+            src={selectedImage}
+            alt="Imagen seleccionada"
+            className="max-h-full max-w-full"
+          />
+        </Modal>
       </div>
     </div>
   );
