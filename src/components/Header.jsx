@@ -13,7 +13,7 @@ const Header = () => {
 
   // Check if user data exists in localStorage
   const userData = JSON.parse(localStorage.getItem("user"));
-  const profilePic = userData ? userData.profilePicture : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+  const profilePic = userData.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
   const handleLogout = () => {
     logout();

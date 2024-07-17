@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { getUserById } from "../api/users";
 
 const usePosts = () => {
   const [posts, setPosts] = useState([]);
@@ -7,6 +8,7 @@ const usePosts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [postsStatus, setPostsStatus] = useState("loading");
+  const me = JSON.parse(localStorage.getItem("user"))
   const id = JSON.parse(localStorage.getItem("user"))._id;
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -78,6 +80,8 @@ const usePosts = () => {
 
   const handleLikePost = async (postId) => {
     try {
+      const ṕost = posts.find((post) => post._id === postId);
+      const author = await getUserById(ṕost.authorId);
       await axios.post(
         `http://localhost:3000/api/v1/posts/${postId}/like`,
         { userId: id },
@@ -95,6 +99,24 @@ const usePosts = () => {
             : post
         )
       );
+
+      const notification = {
+        title: `A ${me.username} le ha gustado tu post!`,
+        content: `${author.username}, tienes un nuevo like en tu post!`,
+        type: "like",
+        from: id,
+        to: ṕost.authorId,
+        metadata: {
+          postId,
+        }
+      }
+
+      await axios.post(
+        "http://localhost:3000/api/v1/notifications",
+        notification,
+        config
+      );
+
     } catch (err) {
       setError(err);
     }

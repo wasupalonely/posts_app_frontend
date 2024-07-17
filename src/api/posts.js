@@ -23,3 +23,19 @@ export const likePost = async (postId, userId) => {
     return err;
   }
 };
+
+export const getPostById = async (postId) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const response = await axios.get(`${API_URL}/posts/${postId}`, config);
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+};
