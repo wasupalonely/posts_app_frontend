@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+// /src/components/Feed.js
+
+import { useEffect } from "react";
 import Header from "./Header";
 import CreatePost from "./CreatePost";
 import PostsList from "./PostsList";
-import Sidebar from "./Sidebar";
 import usePosts from "../hooks/usePosts";
 
 const Feed = () => {
@@ -15,6 +16,7 @@ const Feed = () => {
     loading,
     error,
     fetchPosts,
+    loadMorePosts,
   } = usePosts();
 
   useEffect(() => {
@@ -35,6 +37,7 @@ const Feed = () => {
               handleDeletePost={handleDeletePost}
               handleLikePost={handleLikePost}
               handleBookmarkPost={handleBookmarkPost}
+              loadMorePosts={loadMorePosts}
             />
           </div>
         </main>
