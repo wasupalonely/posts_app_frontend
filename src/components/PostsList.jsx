@@ -1,13 +1,10 @@
-// PostsList.jsx
 import React, { useEffect, useState } from "react";
 import { getUserById } from "../api/users";
 import StatusMessage from "./StatusMessage";
 import Post from "./Post";
-import axios from "axios";
-import { toast } from "react-toastify";
-import usePosts from "../hooks/usePosts";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import usePosts from "../hooks/usePosts";
 
 const PostsList = ({
   posts,
@@ -60,7 +57,16 @@ const PostsList = ({
         </div>
       ) : loading ? (
         <div>
-          <StatusMessage type={"loading"} message={"Cargando..."} />
+          {Array(5)
+            .fill()
+            .map((_, index) => (
+              <div key={index} className="bg-gray-800 shadow-md rounded-lg p-4 mb-4">
+                <Skeleton height={40} width={40} circle={true} baseColor="#333" highlightColor="#444" />
+                <Skeleton height={20} width={`60%`} baseColor="#333" highlightColor="#444" />
+                <Skeleton height={20} width={`80%`} baseColor="#333" highlightColor="#444" />
+                <Skeleton height={200} baseColor="#333" highlightColor="#444" />
+              </div>
+            ))}
         </div>
       ) : (
         posts.map((post) => (

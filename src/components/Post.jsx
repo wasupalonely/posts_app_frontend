@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 import Skeleton from "react-loading-skeleton";
 import { toast } from "react-toastify";
 import StatusMessage from "./StatusMessage";
@@ -20,7 +20,7 @@ const Post = ({
   const me = JSON.parse(localStorage.getItem("user"));
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingComments, setLoadingComments] = useState(true);
   const [showComments, setShowComments] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -37,7 +37,7 @@ const Post = ({
       );
       const data = await response.data;
       setComments(data);
-      setLoading(false);
+      setLoadingComments(false);
     } catch (err) {
       console.error(err);
     }
@@ -100,25 +100,27 @@ const Post = ({
     getComments();
   }, []);
 
-  if (loading)
+  if (!user) {
     return (
       <div className="bg-gray-800 shadow-md rounded-lg p-4 mb-4">
-        <StatusMessage type="loading" message="Cargando..." />
+        <Skeleton height={40} width={40} circle={true} baseColor="#333" highlightColor="#444" />
+        <Skeleton height={20} width={`60%`} baseColor="#333" highlightColor="#444" />
+        <Skeleton height={20} width={`80%`} baseColor="#333" highlightColor="#444" />
+        <Skeleton height={200} baseColor="#333" highlightColor="#444" />
       </div>
     );
+  }
 
   return (
     <div className="bg-gray-800 shadow-md rounded-lg p-4 mb-4">
       <div className="flex items-center mb-2">
         <img
-          src={user?.profilePicture || dummyImage}
-          alt={`${user?.username || "Unknown"}'s avatar`}
+          src={user.profilePicture || dummyImage}
+          alt={`${user.username || "Unknown"}'s avatar`}
           className="w-10 h-10 rounded-full mr-2"
         />
-        <div onClick={() => navigate(`/profile/${user?._id || "#"}`)} className="cursor-pointer" >
-          <p className="text-white">
-            {user ? user.username : <Skeleton width={100} />}
-          </p>
+        <div onClick={() => navigate(`/profile/${user._id}`)} className="cursor-pointer">
+          <p className="text-white">{user.username || <Skeleton width={100} baseColor="#333" highlightColor="#444" />}</p>
         </div>
       </div>
       <p className="text-white">{post.content}</p>
@@ -192,7 +194,9 @@ const Post = ({
       {showComments && (
         <div className="mt-4">
           <h3 className="text-white text-lg mb-2">Comentarios</h3>
-          {comments.length > 0 ? (
+          {loadingComments ? (
+            <Skeleton count={3} baseColor="#333" highlightColor="#444" />
+          ) : comments.length > 0 ? (
             comments.map((comment, index) => (
               <div key={index} className="mb-2">
                 <p className="text-gray-300 text-sm">
