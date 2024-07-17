@@ -43,7 +43,7 @@ const App = () => {
               <Route path="/bookmarks" element={isAuthenticated ? <Bookmarks /> : <Navigate to="/" />} />
               <Route path="/notifications" element={isAuthenticated ? <Notifications /> : <Navigate to="/" />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/edit-profile" element={isAuthenticated ? <EditProfile /> : <Navigate to="/" />} />
+              <Route path="/edit-profile/:userId" element={isAuthenticated ? <EditProfile /> : <Navigate to="/" />} />
               <Route path="/recovery" element={<ResetPassword />} />
               <Route path='/*' element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
               <Route path='post/:postId' element={isAuthenticated ? <SinglePost /> : <Navigate to="/" />} />

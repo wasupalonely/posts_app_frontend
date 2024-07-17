@@ -3,6 +3,7 @@ import axios from "axios";
 import StatusMessage from "./StatusMessage";
 import { SocketContext } from "./SocketProvider";
 import { Bounce, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const ChatWindow = ({ user }) => {
   const [messages, setMessages] = useState([]);
@@ -11,6 +12,7 @@ const ChatWindow = ({ user }) => {
   const messagesEndRef = useRef(null);
   const { socket } = useContext(SocketContext);
   const authorId = JSON.parse(localStorage.getItem("user"))._id;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserAndLoadMessages = async () => {
@@ -83,7 +85,7 @@ const ChatWindow = ({ user }) => {
             alt="Profile"
             className="h-8 w-8 rounded-full"
           />
-          <div>
+          <div className="cursor-pointer" onClick={() => navigate(`/profile/${user._id}`)}>
             <p className="text-base font-semibold text-gray-900 dark:text-white">
               {user.username}
             </p>

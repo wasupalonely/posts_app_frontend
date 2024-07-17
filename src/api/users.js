@@ -30,3 +30,22 @@ export const getUserById = async (id) => {
   }
 };
 
+export const updateUsers = async (id, user) => {
+  try {
+    console.log("mara",user)
+    console.log("mia",id)
+  const updateUsers = await axios.put(
+    `${API_URL}/users/${id}`,
+    {
+        user
+    },
+    {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        },
+    }
+);
+  } catch (error) {
+    console.log(error.message)
+  }
+}
