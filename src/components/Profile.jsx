@@ -91,7 +91,7 @@ const Profile = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4">
-      <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 sm:p-8">
+      <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row items-center sm:items-start sm:justify-between">
           <img
             src={
@@ -125,25 +125,11 @@ const Profile = () => {
           </div>
           <div className="flex space-x-4 mt-4 sm:mt-0">
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full"
               onClick={() => navigate("/edit-profile")}
             >
               Editar Perfil
             </button>
-<<<<<<< HEAD
-           {user?._id !== myId && (
-          <button
-            onClick={() => handleFollowUser(user._id)}
-            className={`ml-3 px-4 py-2 font-semibold rounded-full focus:outline-none transition-colors duration-300 ${
-              isFollowing
-                ? "bg-gray-200 text-black hover:bg-gray-300"
-                : "bg-blue-500 text-white hover:bg-blue-600"
-            }`}
-          >
-            {isFollowing ? "Siguiendo" : "Seguir"}
-          </button>)
-          }
-=======
             {user?._id !== myId && (
               <button
                 onClick={() => handleFollowUser(user._id)}
@@ -156,9 +142,8 @@ const Profile = () => {
                 {isFollowing ? "Siguiendo" : "Seguir"}
               </button>
             )}
->>>>>>> 2a09c0133fbe7374642eaf22ed0371fc8fbf7520
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center"
+              className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-full flex items-center"
               onClick={() => navigate(-1)}
             >
               <svg
@@ -180,7 +165,7 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="flex justify-around mt-8 mb-6">
+        <div className="flex justify-around mt-8 mb-6 ">
           <div className="text-center">
             <span className="text-xl font-bold text-gray-800 dark:text-white">
               {user.posts?.length || 0}
