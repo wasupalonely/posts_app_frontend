@@ -8,6 +8,8 @@ const usePosts = () => {
   const [error, setError] = useState(null);
   const [postsStatus, setPostsStatus] = useState("loading");
   const id = JSON.parse(localStorage.getItem("user"))._id;
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const token = localStorage.getItem("authToken");
   const config = {
@@ -16,20 +18,37 @@ const usePosts = () => {
     },
   };
 
-  const fetchPosts = useCallback(async () => {
-    try {
-      const res = await axios.get("http://localhost:3000/api/v1/posts", config);
-      if (res.data.length === 0) {
-        setPostsStatus("empty");
+  const fetchPosts = useCallback(
+    async (page = 1) => {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          `http://localhost:3000/api/v1/posts?page=${page}&limit=10`,
+          config
+        );
+        setPosts((prevPosts) => {
+          if (page === 1) return res.data;
+          return [...prevPosts, ...res.data];
+        });
+        setHasMore(res.data.length > 0); // Si no hay más datos, hasMore será false
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
       }
-      setPosts(res.data);
-    } catch (err) {
-      setPostsStatus("error");
-      setError(err);
-    } finally {
-      setLoading(false);
+    },
+    []
+  );
+
+  const loadMorePosts = () => {
+    if (hasMore) {
+      setPage((prevPage) => prevPage + 1);
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    fetchPosts(page);
+  }, [fetchPosts, page]);
 
   const fetchBookmarks = useCallback(async () => {
     try {
@@ -167,14 +186,15 @@ const usePosts = () => {
     bookmarks,
     loading,
     error,
-    postsStatus,
+    hasMore,
     handleDeletePost,
     handleLikePost,
     handleBookmarkPost,
     handleAddComment,
     handlePostCreated,
-    fetchPosts,
     fetchBookmarks,
+    fetchPosts,
+    loadMorePosts,
     createPost,
   };
 };

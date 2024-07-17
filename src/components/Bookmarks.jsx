@@ -6,7 +6,15 @@ import Header from "./Header";
 
 const Bookmarks = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { bookmarks, loading, error, fetchBookmarks, handleBookmarkPost, handleLikePost } = usePosts();
+  const {
+    bookmarks,
+    loading,
+    error,
+    fetchBookmarks,
+    handleBookmarkPost,
+    handleLikePost,
+    loadMorePosts,
+  } = usePosts();
 
   useEffect(() => {
     fetchBookmarks();
@@ -18,7 +26,11 @@ const Bookmarks = () => {
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} section={"bookmarks"} />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        section={"bookmarks"}
+      />
       <div className="flex-1 flex flex-col lg:ml-64">
         <header className="flex items-center justify-between px-4 py-3 bg-gray-800 text-white lg:hidden">
           <button onClick={toggleSidebar} className="text-white">
@@ -41,11 +53,17 @@ const Bookmarks = () => {
         <main className="flex-1 overflow-y-auto">
           <Header />
           <div className="p-4">
-          <PostsList loading={loading} error={error} posts={bookmarks} handleBookmarkPost={handleBookmarkPost} handleLikePost={handleLikePost} />
+            <PostsList
+              loadMorePosts={loadMorePosts}
+              loading={loading}
+              error={error}
+              posts={bookmarks}
+              handleBookmarkPost={handleBookmarkPost}
+              handleLikePost={handleLikePost}
+            />
           </div>
         </main>
       </div>
-      
     </div>
   );
 };
