@@ -10,7 +10,8 @@ import FollowerList from './components/FollowerList';
 import Feed from './components/Feed';
 import Profile from './components/Profile';
 import Bookmarks from './components/Bookmarks';
-import ResetPassword from './components/ResetPassword'; // Importa el componente ResetPassword
+import ResetPassword from './components/ResetPassword';
+import EditProfile from './components/EditProfile'; // Importa el componente EditProfile
 import SocketProvider from './components/SocketProvider';
 import { ToastContainer } from 'react-toastify';
 
@@ -37,11 +38,8 @@ const App = () => {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/profile/:userId" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} />
               <Route path="/bookmarks" element={isAuthenticated ? <Bookmarks /> : <Navigate to="/" />} />
-              
-              {/* Ruta para restablecer la contraseña con el token */}
+              <Route path="/edit-profile" element={isAuthenticated ? <EditProfile /> : <Navigate to="/" />} />
               <Route path="/recovery" element={<ResetPassword />} />
-              
-              {/* Ruta para manejar cualquier otra URL */}
               <Route path='/*' element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
             </Routes>
           </div>

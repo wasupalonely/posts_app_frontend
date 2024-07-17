@@ -5,6 +5,7 @@ import { AuthContext } from "../App";
 const Sidebar = ({ isOpen, toggleSidebar, section }) => {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const myId = JSON.parse(localStorage.getItem("user"))?._id;
 
   const handleLogout = () => {
     logout();
@@ -55,7 +56,7 @@ const Sidebar = ({ isOpen, toggleSidebar, section }) => {
           </button>
           <button
             className="flex items-center px-4 py-2 text-white rounded hover:bg-gray-700"
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate(`/profile/${myId}`)}
           >
             <box-icon color="white" type={section === "profile" ? "solid" : "regular"} name="user"></box-icon>
             <strong className="ml-2">Perfil</strong>

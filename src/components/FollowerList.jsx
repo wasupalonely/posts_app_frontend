@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { getUsers } from "../api/users";
 import ChatWindow from "./ChatWindow";
 import StatusMessage from "./StatusMessage";
-import Sidebar from "./Sidebar"; // Importa el componente Sidebar
+import Sidebar from "./Sidebar"; // Import the Sidebar component
+
 const dummyProfileImg = 'https://via.placeholder.com/150';
 
 const FollowerList = () => {
@@ -32,7 +33,7 @@ const FollowerList = () => {
     <div className="flex h-screen bg-gray-900 text-white">
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} section={"chat"} />
       <div className="flex-1 flex flex-col md:flex-row">
-        {/* Botón para abrir el sidebar en pantallas pequeñas */}
+        {/* Button to open sidebar on small screens */}
         <div className="md:hidden p-4 bg-gray-800">
           <button onClick={toggleSidebar} className="text-white">
             <svg
@@ -52,7 +53,7 @@ const FollowerList = () => {
           </button>
         </div>
 
-        {/* Lista de usuarios */}
+        {/* User list */}
         <div className="w-full md:w-1/3 lg:w-1/4 bg-gray-200 dark:bg-gray-800 p-2 md:p-4 overflow-y-auto">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6 text-center">Chats</h1>
           <div>
