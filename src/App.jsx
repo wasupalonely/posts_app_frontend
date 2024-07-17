@@ -13,6 +13,7 @@ import Bookmarks from './components/Bookmarks';
 import ResetPassword from './components/ResetPassword'; // Importa el componente ResetPassword
 import SocketProvider from './components/SocketProvider';
 import { ToastContainer } from 'react-toastify';
+import Notifications from './components/Notifications';
 
 export const AuthContext = React.createContext();
 
@@ -37,6 +38,7 @@ const App = () => {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/profile/:userId" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} />
               <Route path="/bookmarks" element={isAuthenticated ? <Bookmarks /> : <Navigate to="/" />} />
+              <Route path="/notifications" element={isAuthenticated ? <Notifications /> : <Navigate to="/" />} />
               
               {/* Ruta para restablecer la contraseña con el token */}
               <Route path="/recovery" element={<ResetPassword />} />
