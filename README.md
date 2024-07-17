@@ -1,6 +1,6 @@
 # PostApp Frontend
 
-PostApp es una aplicación web para compartir publicaciones y chatear con amigos.
+PostApp es una aplicación web para compartir publicaciones y chatear con amig@s.
 
 ## Descripción
 
@@ -51,3 +51,8 @@ Para comenzar con el desarrollo:
 ## Licencia
 
 Este proyecto está licenciado bajo la Licencia MIT - consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+## Integrantes
+- Santiago Jara Hernandez
+- Santiago Andrés Ordoñez Puentes
+- Juan Diego Macias Vargas 

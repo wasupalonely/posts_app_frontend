@@ -5,6 +5,7 @@ import { AuthContext } from "../App";
 const Sidebar = ({ isOpen, toggleSidebar, section }) => {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const myId = JSON.parse(localStorage.getItem("user"))?._id;
 
   const handleLogout = () => {
     logout();
@@ -27,7 +28,7 @@ const Sidebar = ({ isOpen, toggleSidebar, section }) => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform lg:translate-x-0 lg:flex lg:flex-col lg:w-64 lg:bg-gray-800 lg:overflow-y-auto`}
       >
-        <div className="flex items-center justify-between px-4 py-3 lg:py-4 bg-gray-900 lg:bg-gray-800">
+        <div >
           <button onClick={toggleSidebar} className="text-white lg:hidden">
             <svg
               className="w-6 h-6"
@@ -55,7 +56,7 @@ const Sidebar = ({ isOpen, toggleSidebar, section }) => {
           </button>
           <button
             className="flex items-center px-4 py-2 text-white rounded hover:bg-gray-700"
-            onClick={() => navigate(`/profile/${JSON.parse(localStorage.getItem("user"))._id}`)}
+            onClick={() => navigate(`/profile/${myId}`)}
           >
             <box-icon color="white" type={section === "profile" ? "solid" : "regular"} name="user"></box-icon>
             <strong className="ml-2">Perfil</strong>
