@@ -11,6 +11,9 @@ const NotificationsList = ({ notifications }) => {
           content={notification.content}
           seen={notification.seen}
           type={notification.type}
+          metadata={notification.metadata || {}}
+          from={notification.from}
+          to={notification.to}
         />
       ))}
     </div>

@@ -1,8 +1,31 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const Notification = ({ title, content, seen, type }) => {
+const Notification = ({ title, content, seen, type, from, to, metadata }) => {
+  const navigation = useNavigate();
+
+  const handleNotificationsNavigation = () => {
+    switch (type) {
+      case "follow":
+        navigation(`/profile/${from}`);
+        break;
+      case "like":
+        navigation(`/post/${metadata.postId}`);
+        break;
+      case "comment":
+        navigation(`/post/${metadata.postId}`);
+        break;
+      // TODO
+      // case "message":
+      //   navigation(`/profile/${notification.to}`);
+      //   break;
+      default:
+        break;
+    }
+  }
+
   return (
-    <div className={`p-4 mb-2 border rounded bg-gray-900 text-white`}>
+    <div onClick={handleNotificationsNavigation} className={`p-4 mb-2 border rounded bg-gray-900 text-white cursor-pointer`}>
       <div className="flex items-center">
         <div className="mr-4">
           {type === "follow" ? (

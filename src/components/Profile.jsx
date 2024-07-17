@@ -12,6 +12,7 @@ const Profile = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const { userId } = useParams();
   const navigate = useNavigate();
+  const me = JSON.parse(localStorage.getItem("user"));
   const myId = JSON.parse(localStorage.getItem("user"))?._id;
 
   const { user, loading, error, setUser } = useUsers(userId);
@@ -35,6 +36,35 @@ const Profile = () => {
           },
         }
       );
+
+      const userToFollow = await axios.get(
+        `http://localhost:3000/api/v1/users/${authorId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
+
+      if (!isFollowing) {
+        const notificationBody = {
+          from: myId,
+          to: authorId,
+          type: "follow",
+          title: `@${me.username} te ha seguido!`,
+          content: `${userToFollow.data.username}, mira quién te ha seguido!`,
+        };
+
+        await axios.post(
+          "http://localhost:3000/api/v1/notifications",
+          notificationBody,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+      }
 
       // Actualiza manualmente el estado del usuario para reflejar el cambio de seguimiento
       setUser((prevUser) => ({

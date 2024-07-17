@@ -15,6 +15,8 @@ import EditProfile from './components/EditProfile'; // Importa el componente Edi
 import SocketProvider from './components/SocketProvider';
 import { ToastContainer } from 'react-toastify';
 import Notifications from './components/Notifications';
+import LandingPage from './components/LandingPage';
+import SinglePost from './components/SinglePost';
 
 export const AuthContext = React.createContext();
 
@@ -31,7 +33,7 @@ const App = () => {
         <Router>
           <div className="font-sans">
             <Routes>
-              <Route path="/" element={isAuthenticated ? <Feed /> : <Login />} />
+              <Route path="/" element={isAuthenticated ? <Feed /> : <LandingPage />} />
               <Route path="/register" element={<Register />} />
               <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
               <Route path="/dashboard" element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
@@ -40,11 +42,11 @@ const App = () => {
               <Route path="/profile/:userId" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} />
               <Route path="/bookmarks" element={isAuthenticated ? <Bookmarks /> : <Navigate to="/" />} />
               <Route path="/notifications" element={isAuthenticated ? <Notifications /> : <Navigate to="/" />} />
-              
-              {/* Ruta para restablecer la contraseña con el token */}
+              <Route path="/login" element={<Login />} />
               <Route path="/edit-profile" element={isAuthenticated ? <EditProfile /> : <Navigate to="/" />} />
               <Route path="/recovery" element={<ResetPassword />} />
               <Route path='/*' element={isAuthenticated ? <Feed /> : <Navigate to="/" />} />
+              <Route path='post/:postId' element={isAuthenticated ? <SinglePost /> : <Navigate to="/" />} />
             </Routes>
           </div>
         </Router>
