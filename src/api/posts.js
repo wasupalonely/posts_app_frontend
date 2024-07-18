@@ -39,3 +39,19 @@ export const getPostById = async (postId) => {
     return err;
   }
 };
+
+export const getPostsByUserId = async (userId, page) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const response = await axios.get(`${API_URL}/posts/author/${userId}?limit=10&page=${page}`, config);
+    return response;
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+};

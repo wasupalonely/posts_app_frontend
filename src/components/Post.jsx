@@ -201,7 +201,7 @@ const Post = ({
       <div className="flex justify-between items-center mt-2">
         <div className="flex space-x-3">
           <button
-            onClick={() => handleLikeClick(post._id)}
+            onClick={() => handleLikePost(post._id)}
             className="text-white hover:text-red-500 focus:outline-none relative"
             style={{ width: 24, height: 24 }} // Asegúrate de que el botón tenga un tamaño fijo
           >
@@ -213,11 +213,13 @@ const Post = ({
                 color="white"
                 style={{ width: 24, height: 24 }}
               ></box-icon>
-            ) : isAnimatingLike ? (
-              <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-                <Lottie options={defaultLikeOptions} height={43} width={43} />
-              </div>
-            ) : (
+            ) : 
+            // isAnimatingLike ? (
+            //   <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+            //     <Lottie options={defaultLikeOptions} height={43} width={43} />
+            //   </div>
+            // ) : 
+            (
               <box-icon
                 name="heart"
                 type="solid"

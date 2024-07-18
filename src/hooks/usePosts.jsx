@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { getUserById } from "../api/users";
+import { getPostsByUserId } from "../api/posts";
 
-const usePosts = (type = "post", singlePostId) => {
+const usePosts = (type = "post", singlePostId = null, predefinedUserId) => {
   const [singlePost, setSinglePost] = useState(null);
   const [posts, setPosts] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
@@ -36,10 +37,15 @@ const usePosts = (type = "post", singlePostId) => {
   const fetchPosts = useCallback(async (page = 1) => {
     setLoading(true);
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/v1/posts?page=${page}&limit=10`,
-        config
-      );
+      let res;
+      if (!predefinedUserId) {
+        res = await axios.get(
+          `http://localhost:3000/api/v1/posts?page=${page}&limit=10`,
+          config
+        );
+      } else {
+        res = await getPostsByUserId(predefinedUserId, page);
+      }
       setPosts((prevPosts) => {
         if (page === 1) return res.data;
         return [...prevPosts, ...res.data];
@@ -89,8 +95,15 @@ const usePosts = (type = "post", singlePostId) => {
   };
 
   const handleLikePost = async (postId) => {
+    console.log("POSTSSSS", posts);
     try {
-      const post = posts.find((post) => post._id === postId);
+      let post;
+      if (type === "post") {
+        post = posts.find((post) => post._id === postId);
+      } else {
+        post = bookmarks.find((post) => post._id === postId);
+      }
+      console.log("LIKE POST", post);
       const author = await getUserById(post.authorId);
       await axios.post(
         `http://localhost:3000/api/v1/posts/${postId}/like`,
@@ -111,8 +124,9 @@ const usePosts = (type = "post", singlePostId) => {
           )
         );
       } else if (type === "bookmarks") {
-        setBookmarks((prevPosts) =>
-          prevPosts.map((post) =>
+        setBookmarks((prevPosts) => {
+          console.log("PREVPOST BOOKMARSKS", prevPosts);
+          return prevPosts.map((post) =>
             post._id === postId
               ? {
                   ...post,
@@ -121,8 +135,8 @@ const usePosts = (type = "post", singlePostId) => {
                     : [...post.likes, id],
                 }
               : post
-          )
-        );
+          );
+        });
       } else {
         setSinglePost((prevPost) => {
           console.log("prevPost", prevPost);
@@ -152,6 +166,7 @@ const usePosts = (type = "post", singlePostId) => {
         config
       );
     } catch (err) {
+      console.log("error--->", err.message);
       setError(err);
     }
   };

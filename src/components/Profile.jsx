@@ -5,24 +5,35 @@ import { ClipLoader } from "react-spinners";
 import axios from "axios";
 import useUsers from "../hooks/useUsers";
 import { toast } from "react-toastify";
+import PostsList from "./PostsList";
+import usePosts from "../hooks/usePosts";
 
 Modal.setAppElement("#root");
 
 const Profile = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [userPosts, setUserPosts] = useState([]);
   const { userId } = useParams();
   const navigate = useNavigate();
   const me = JSON.parse(localStorage.getItem("user"));
   const myId = me?._id;
 
   const { user, loading, error, setUser } = useUsers(userId);
+    const {
+    handleBookmarkPost,
+    handleLikePost,
+    handleDeletePost,
+    error: postsError,
+    loading: postsLoading,
+    loadMorePosts,
+    posts
+  } = usePosts("post", null, userId);
 
   const isFollowing = user?.followers?.includes(myId);
 
   const handleImageClick = useCallback((imageUrl) => {
     setSelectedImage(imageUrl);
   }, []);
-
 
   const handleFollowUser = async (authorId) => {
     const wasFollowing = isFollowing;
@@ -108,10 +119,7 @@ const Profile = () => {
             },
           }
         );
-        setUser((prevUser) => ({
-          ...prevUser,
-          posts: response.data,
-        }));
+        setUserPosts(response.data);
       } catch (error) {
         console.error("Error al cargar los posts del usuario:", error);
         toast.error("Error al cargar los posts del usuario 😢", {
@@ -128,7 +136,7 @@ const Profile = () => {
     };
 
     fetchPosts();
-  }, [userId, setUser]);
+  }, []);
 
   if (loading) {
     return (
@@ -152,8 +160,8 @@ const Profile = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4">
-      <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start sm:justify-between" >
+      <div className="w-full my-8 max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start sm:justify-between">
           <div className="flex">
             <img
               src={
@@ -163,9 +171,8 @@ const Profile = () => {
               alt="Imagen de perfil"
               className="w-24 h-24 sm:w-32 sm:h-32 rounded-full mb-4 sm:mb-0"
             />
-            <button
-                  className=" right-[-8px] bg-white text-black rounded-full p-1 flex items-center justify-center w-6 h-6">
-                  <box-icon name='edit-alt' color='black' ></box-icon>
+            <button className=" right-[-8px] bg-white text-black rounded-full p-1 flex items-center justify-center w-6 h-6">
+              <box-icon name="edit-alt" color="black"></box-icon>
             </button>
           </div>
           <div className="sm:ml-6 text-center sm:text-left">
@@ -256,7 +263,16 @@ const Profile = () => {
         </div>
 
         <div className="grid grid-cols-3 gap-4">
-          {user.posts &&
+          <PostsList
+            posts={posts}
+            handleBookmarkPost={handleBookmarkPost}
+            handleDeletePost={handleDeletePost}
+            handleLikePost={handleLikePost}
+            loading={postsLoading}
+            error={postsError}
+            loadMorePosts={loadMorePosts}
+          />
+          {/* {user.posts &&
             user.posts.map((post, index) => (
               <div
                 key={index}
@@ -279,7 +295,7 @@ const Profile = () => {
                   <span>{post.comments} Comentarios</span>
                 </div>
               </div>
-            ))}
+            ))} */}
         </div>
 
         <Modal
