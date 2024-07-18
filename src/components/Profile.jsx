@@ -23,6 +23,7 @@ const Profile = () => {
     setSelectedImage(imageUrl);
   }, []);
 
+
   const handleFollowUser = async (authorId) => {
     try {
       await axios.post(
@@ -154,15 +155,21 @@ const Profile = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4">
       <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start sm:justify-between">
-          <img
-            src={
-              user.profilePicture ||
-              "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            }
-            alt="Imagen de perfil"
-            className="w-24 h-24 sm:w-32 sm:h-32 rounded-full mb-4 sm:mb-0"
-          />
+        <div className="flex flex-col sm:flex-row items-center sm:items-start sm:justify-between" >
+          <div className="flex">
+            <img
+              src={
+                user.profilePicture ||
+                "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+              }
+              alt="Imagen de perfil"
+              className="w-24 h-24 sm:w-32 sm:h-32 rounded-full mb-4 sm:mb-0"
+            />
+            <button
+                  className=" right-[-8px] bg-white text-black rounded-full p-1 flex items-center justify-center w-6 h-6">
+                  <box-icon name='edit-alt' color='black' ></box-icon>
+            </button>
+          </div>
           <div className="sm:ml-6 text-center sm:text-left">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
               {user.name}
@@ -191,7 +198,7 @@ const Profile = () => {
                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full"
                 onClick={() => navigate(`/edit-profile/${userId}`)}
               >
-                Editar Perfil
+                Edit Profile
               </button>
             )}
             {user?._id !== myId && (
@@ -203,7 +210,7 @@ const Profile = () => {
                     : "bg-blue-500 text-white hover:bg-blue-600"
                 }`}
               >
-                {isFollowing ? "Siguiendo" : "Seguir"}
+                {isFollowing ? "Following" : "Follow"}
               </button>
             )}
             <button
@@ -212,7 +219,7 @@ const Profile = () => {
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 mr-2"
+                className="h-6 w-6 mr-1"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -224,7 +231,7 @@ const Profile = () => {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              Volver
+              Back
             </button>
           </div>
         </div>
