@@ -75,7 +75,7 @@ const EditProfile = () => {
         theme: "dark",
       });
       navigate(`/profile/${userId}`);
-    } catch (error) {
+    } catch (error) { 
       console.error("Error al actualizar el perfil:", error);
       toast.error("Error al actualizar el perfil 😢", {
         position: "top-center",
