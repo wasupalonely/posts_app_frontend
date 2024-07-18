@@ -17,7 +17,7 @@ const Feed = () => {
     error,
     fetchPosts,
     loadMorePosts,
-  } = usePosts();
+  } = usePosts("post");
 
   useEffect(() => {
     fetchPosts();

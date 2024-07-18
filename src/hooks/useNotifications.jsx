@@ -1,10 +1,12 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { config } from "react-transition-group";
+import { useEffect, useState, useCallback } from "react";
 
 const useNotifications = () => {
   const myId = JSON.parse(localStorage.getItem("user"))._id;
   const [notifications, setNotifications] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("authToken");
   const config = {
@@ -12,46 +14,41 @@ const useNotifications = () => {
       Authorization: `Bearer ${token}`,
     },
   };
-  
-  useEffect(() => {
-    const fetchMyNotifications = async () => {
-      const notifications = await axios.get(
-        `http://localhost:3000/api/v1/notifications/receiver/${myId}`,
+
+  const fetchNotifications = useCallback(async (page) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/v1/notifications/receiver/${myId}?page=${page}`,
         config
       );
-      console.log("NOTIFICATIONS", notifications.data);
-
-      setNotifications(notifications.data);
-    };
-
-    fetchMyNotifications();
+      const newNotifications = response.data;
+      setNotifications((prevNotifications) => [
+        ...prevNotifications,
+        ...newNotifications,
+      ]);
+      setHasMore(newNotifications.length > 0);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+    setLoading(false);
   }, []);
 
-  const handleSendNotification = async (notification) => {
-    await axios.post(
-      "http://localhost:3000/api/v1/notifications",
-      notification,
-      config
-    );
-  };
+  useEffect(() => {
+    fetchNotifications(page);
+  }, [page, fetchNotifications]);
 
-  const handleClickNotification = async (notification) => {
-    switch (notification.type) {
-      case "follow":
-        break;
-      case "like":
-        break;
-      case "comment":
-        break;
-      case "message":
-        break;
-      default:
-        break;
+  const loadMoreNotifications = () => {
+    if (!loading && hasMore) {
+      setPage((prevPage) => prevPage + 1);
     }
   };
 
   return {
     notifications,
+    loading,
+    hasMore,
+    loadMoreNotifications,
   };
 };
 

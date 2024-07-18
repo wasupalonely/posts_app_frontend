@@ -2,12 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { getUserById } from "../api/users";
 
-const usePosts = () => {
+const usePosts = (type = "post", singlePostId) => {
+  const [singlePost, setSinglePost] = useState(null);
   const [posts, setPosts] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [postsStatus, setPostsStatus] = useState("loading");
   const me = JSON.parse(localStorage.getItem("user"));
   const id = JSON.parse(localStorage.getItem("user"))._id;
   const [page, setPage] = useState(1);
@@ -19,6 +19,19 @@ const usePosts = () => {
       Authorization: `Bearer ${token}`,
     },
   };
+
+  const fetchSinglePost = useCallback(async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/api/v1/posts/${singlePostId}`,
+        config
+      );
+      console.log("aaaaaaaaaaaaaaaa", res.data);
+      setSinglePost(res.data);
+    } catch (err) {
+      setError(err);
+    }
+  }, [singlePostId]);
 
   const fetchPosts = useCallback(async (page = 1) => {
     setLoading(true);
@@ -84,18 +97,43 @@ const usePosts = () => {
         { userId: id },
         config
       );
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId
-            ? {
-                ...post,
-                likes: post.likes.includes(id)
-                  ? post.likes.filter((likeId) => likeId !== id)
-                  : [...post.likes, id],
-              }
-            : post
-        )
-      );
+      if (type === "post") {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  likes: post.likes.includes(id)
+                    ? post.likes.filter((likeId) => likeId !== id)
+                    : [...post.likes, id],
+                }
+              : post
+          )
+        );
+      } else if (type === "bookmarks") {
+        setBookmarks((prevPosts) =>
+          prevPosts.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  likes: post.likes.includes(id)
+                    ? post.likes.filter((likeId) => likeId !== id)
+                    : [...post.likes, id],
+                }
+              : post
+          )
+        );
+      } else {
+        setSinglePost((prevPost) => {
+          console.log("prevPost", prevPost);
+          return {
+            ...prevPost,
+            likes: prevPost.likes.includes(id)
+              ? prevPost.likes.filter((likeId) => likeId !== id)
+              : [...prevPost.likes, id],
+          };
+        });
+      }
 
       const notification = {
         title: `A ${me.username} le ha gustado tu post!`,
@@ -125,18 +163,43 @@ const usePosts = () => {
         { postId },
         config
       );
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId
-            ? {
-                ...post,
-                bookmarks: post.bookmarks.includes(id)
-                  ? post.bookmarks.filter((bm) => bm !== id)
-                  : [...post.bookmarks, id],
-              }
-            : post
-        )
-      );
+
+      if (type === "post") {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  bookmarks: post.bookmarks.includes(id)
+                    ? post.bookmarks.filter((bm) => bm !== id)
+                    : [...post.bookmarks, id],
+                }
+              : post
+          )
+        );
+      } else if (type === "bookmarks") {
+        setBookmarks((prevPosts) =>
+          prevPosts.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  bookmarks: post.bookmarks.includes(id)
+                    ? post.bookmarks.filter((bm) => bm !== id)
+                    : [...post.bookmarks, id],
+                }
+              : post
+          )
+        );
+      } else {
+        setSinglePost((prevPost) => {
+          return {
+            ...prevPost,
+            bookmarks: prevPost.bookmarks.includes(id)
+              ? prevPost.bookmarks.filter((bm) => bm !== id)
+              : [...prevPost.bookmarks, id],
+          };
+        });
+      }
       fetchBookmarks();
     } catch (err) {
       setError(err);
@@ -218,7 +281,14 @@ const usePosts = () => {
     fetchBookmarks();
   }, [fetchPosts, fetchBookmarks]);
 
+  useEffect(() => {
+    if (singlePostId) {
+      fetchSinglePost();
+    }
+  }, [singlePostId]);
+
   return {
+    singlePost,
     posts,
     bookmarks,
     loading,

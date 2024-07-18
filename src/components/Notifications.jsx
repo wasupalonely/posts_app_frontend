@@ -6,7 +6,7 @@ import NotificationsList from "./NotificationsList";
 
 const Notifications = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { notifications } = useNotifications();
+  const { notifications, loading, hasMore, loadMoreNotifications } = useNotifications();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -23,7 +23,12 @@ const Notifications = () => {
         <main className="flex-1 overflow-y-auto">
           <Header />
           <div className="p-4">
-            <NotificationsList notifications={notifications} />
+            <NotificationsList
+              notifications={notifications}
+              loading={loading}
+              hasMore={hasMore}
+              loadMoreNotifications={loadMoreNotifications}
+            />
           </div>
         </main>
       </div>

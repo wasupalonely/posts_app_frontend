@@ -13,7 +13,7 @@ const Profile = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const me = JSON.parse(localStorage.getItem("user"));
-  const myId = JSON.parse(localStorage.getItem("user"))?._id;
+  const myId = me?._id;
 
   const { user, loading, error, setUser } = useUsers(userId);
 
@@ -24,6 +24,16 @@ const Profile = () => {
   }, []);
 
   const handleFollowUser = async (authorId) => {
+    const wasFollowing = isFollowing;
+
+    // Actualización optimista
+    setUser((prevUser) => ({
+      ...prevUser,
+      followers: wasFollowing
+        ? prevUser.followers.filter((followerId) => followerId !== myId)
+        : [...prevUser.followers, myId],
+    }));
+
     try {
       await axios.post(
         `http://localhost:3000/api/v1/users/${authorId}/toggle-follow`,
@@ -35,16 +45,16 @@ const Profile = () => {
         }
       );
 
-      const userToFollow = await axios.get(
-        `http://localhost:3000/api/v1/users/${authorId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        }
-      );
+      if (!wasFollowing) {
+        const userToFollow = await axios.get(
+          `http://localhost:3000/api/v1/users/${authorId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
 
-      if (!isFollowing) {
         const notificationBody = {
           from: myId,
           to: authorId,
@@ -63,26 +73,15 @@ const Profile = () => {
           }
         );
       }
-
-      // Actualiza manualmente el estado del usuario para reflejar el cambio de seguimiento
+    } catch (error) {
+      // Revertir la actualización en caso de error
       setUser((prevUser) => ({
         ...prevUser,
-        followers: isFollowing
-          ? prevUser.followers.filter((followerId) => followerId !== myId)
-          : [...prevUser.followers, myId],
+        followers: wasFollowing
+          ? [...prevUser.followers, myId]
+          : prevUser.followers.filter((followerId) => followerId !== myId),
       }));
 
-      toast.success(isFollowing ? "Dejado de seguir 🦄" : "Seguido! 🦄", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    } catch (error) {
       console.error("Error al seguir al usuario:", error);
       toast.error("Error al seguir al usuario 😢", {
         position: "top-center",
@@ -98,7 +97,6 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    // Fetch posts for current user (me)
     const fetchPosts = async () => {
       try {
         const response = await axios.get(

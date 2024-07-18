@@ -3,7 +3,9 @@ import axios from "axios";
 import Modal from "react-modal";
 import Skeleton from "react-loading-skeleton";
 import { toast } from "react-toastify";
-import StatusMessage from "./StatusMessage";
+import Lottie from "react-lottie";
+import animationData from "../animations/like.json";
+import animationBookmark from "../animations/bookmark.json";
 import { useNavigate } from "react-router-dom";
 
 const Post = ({
@@ -15,9 +17,9 @@ const Post = ({
   handleDeletePost,
   handleAddComment,
 }) => {
-  console.log("🚀 ~ post:", user)
   const dummyImage = "https://via.placeholder.com/150";
   const isLiked = post.likes.includes(id);
+  const isBookmarked = post.bookmarks.includes(id);
   const me = JSON.parse(localStorage.getItem("user"));
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
@@ -25,6 +27,8 @@ const Post = ({
   const [showComments, setShowComments] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isAnimatingLike, setIsAnimatingLike] = useState(false);
+  const [isAnimatingBookmark, setIsAnimatingBookmark] = useState(false);
   const navigate = useNavigate();
 
   const handleCommentChange = (e) => {
@@ -58,7 +62,7 @@ const Post = ({
           },
         ]);
       } catch (err) {
-        toast.error('Error al crear el comentario 😢', {
+        toast.error("Error al crear el comentario 😢", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -70,7 +74,7 @@ const Post = ({
         });
       }
     } else {
-      toast.error('El comentario no puede estar vacío', {
+      toast.error("El comentario no puede estar vacío", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -97,6 +101,20 @@ const Post = ({
     setSelectedImage(null);
   };
 
+  const handleLikeClick = (postId) => {
+    setIsAnimatingLike(true);
+    handleLikePost(postId);
+
+    setTimeout(() => setIsAnimatingLike(false), 1000);
+  };
+
+  const handleBookmarkClick = (postId) => {
+    setIsAnimatingBookmark(true);
+    handleBookmarkPost(postId);
+
+    setTimeout(() => setIsAnimatingBookmark(false), 1000);
+  };
+
   useEffect(() => {
     getComments();
   }, []);
@@ -104,13 +122,47 @@ const Post = ({
   if (!user) {
     return (
       <div className="bg-gray-800 shadow-md rounded-lg p-4 mb-4">
-        <Skeleton height={40} width={40} circle={true} baseColor="#333" highlightColor="#444" />
-        <Skeleton height={20} width={`60%`} baseColor="#333" highlightColor="#444" />
-        <Skeleton height={20} width={`80%`} baseColor="#333" highlightColor="#444" />
+        <Skeleton
+          height={40}
+          width={40}
+          circle={true}
+          baseColor="#333"
+          highlightColor="#444"
+        />
+        <Skeleton
+          height={20}
+          width={`60%`}
+          baseColor="#333"
+          highlightColor="#444"
+        />
+        <Skeleton
+          height={20}
+          width={`80%`}
+          baseColor="#333"
+          highlightColor="#444"
+        />
         <Skeleton height={200} baseColor="#333" highlightColor="#444" />
       </div>
     );
   }
+
+  const defaultLikeOptions = {
+    loop: false,
+    autoplay: false,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+
+  const defaultBookmarkOptions = {
+    loop: false,
+    autoplay: false,
+    animationData: animationBookmark,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
   return (
     <div className="bg-gray-800 shadow-md rounded-lg p-4 mb-4">
@@ -120,8 +172,15 @@ const Post = ({
           alt={`${user.username || "Unknown"}'s avatar`}
           className="w-10 h-10 rounded-full mr-2"
         />
-        <div onClick={() => navigate(`/profile/${user._id}`)} className="cursor-pointer">
-          <p className="text-white">{user.username || <Skeleton width={100} baseColor="#333" highlightColor="#444" />}</p>
+        <div
+          onClick={() => navigate(`/profile/${user._id}`)}
+          className="cursor-pointer"
+        >
+          <p className="text-white">
+            {user.username || (
+              <Skeleton width={100} baseColor="#333" highlightColor="#444" />
+            )}
+          </p>
         </div>
       </div>
       <p className="text-white">{post.content}</p>
@@ -140,28 +199,64 @@ const Post = ({
       )}
 
       <div className="flex justify-between items-center mt-2">
-        <div className="flex space-x-4">
+        <div className="flex space-x-3">
           <button
-            onClick={() => handleLikePost(post._id)}
-            className="text-white hover:text-red-500 focus:outline-none"
+            onClick={() => handleLikeClick(post._id)}
+            className="text-white hover:text-red-500 focus:outline-none relative"
+            style={{ width: 24, height: 24 }} // Asegúrate de que el botón tenga un tamaño fijo
           >
-            <box-icon
-              name="heart"
-              type={isLiked ? "solid" : "regular"}
-              animation="tada-hover"
-              color={isLiked ? "red" : "white"}
-            ></box-icon>
+            {!isLiked ? (
+              <box-icon
+                name="heart"
+                type="regular"
+                animation="tada-hover"
+                color="white"
+                style={{ width: 24, height: 24 }}
+              ></box-icon>
+            ) : isAnimatingLike ? (
+              <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                <Lottie options={defaultLikeOptions} height={43} width={43} />
+              </div>
+            ) : (
+              <box-icon
+                name="heart"
+                type="solid"
+                animation="tada-hover"
+                color="#f9423e"
+                style={{ width: 24, height: 24 }}
+              ></box-icon>
+            )}
           </button>
+
           <p className="text-white">{post.likes.length}</p>
           <button
-            onClick={() => handleBookmarkPost(post._id)}
-            className="text-white hover:text-blue-500 focus:outline-none"
+            onClick={() => handleBookmarkClick(post._id)}
+            className="text-white hover:text-blue-500 focus:outline-none relative"
+            style={{ width: 24, height: 24 }}
           >
-            <box-icon
-              name="bookmark"
-              type={post.bookmarks.includes(id) ? "solid" : "regular"}
-              color={post.bookmarks.includes(id) ? "yellow" : "white"}
-            ></box-icon>
+            {!isBookmarked ? (
+              <box-icon
+                name="bookmark"
+                type="regular"
+                color="white"
+                style={{ width: 24, height: 24 }}
+              ></box-icon>
+            ) : isAnimatingBookmark ? (
+              <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                <Lottie
+                  options={defaultBookmarkOptions}
+                  height={28}
+                  width={28}
+                />
+              </div>
+            ) : (
+              <box-icon
+                name="bookmark"
+                type="solid"
+                color="#ff9700"
+                style={{ width: 24, height: 24 }}
+              ></box-icon>
+            )}
           </button>
           <p className="text-white">{post.bookmarks.length}</p>
           <button
@@ -235,14 +330,17 @@ const Post = ({
         overlayClassName="fixed inset-0 bg-black bg-opacity-75 z-40"
       >
         <div className="relative bg-gray-900 rounded-lg overflow-hidden shadow-lg max-w-4xl w-full max-h-screen z-50">
-          <button onClick={closeModal} className="absolute top-2 right-2 text-white text-xl z-50">
+          <button
+            onClick={closeModal}
+            className="absolute top-2 right-2 text-white text-xl z-50"
+          >
             &times;
           </button>
           <img
             src={selectedImage}
             alt="Imagen Grande"
             className="w-full h-auto object-contain z-50"
-            style={{ maxHeight: '90vh' }}
+            style={{ maxHeight: "90vh" }}
           />
         </div>
       </Modal>

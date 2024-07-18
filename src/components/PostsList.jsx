@@ -135,6 +135,13 @@ const PostsList = ({
             ))}
         </div>
       )}
+      {
+        posts.length === 0 && (
+          <div>
+            <StatusMessage type={"empty"} message={"No posts found"} />
+          </div>
+        )
+      }
     </>
   );
 };

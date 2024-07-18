@@ -14,7 +14,7 @@ const Bookmarks = () => {
     handleBookmarkPost,
     handleLikePost,
     loadMorePosts,
-  } = usePosts();
+  } = usePosts("bookmarks");
 
   useEffect(() => {
     fetchBookmarks();
@@ -54,6 +54,7 @@ const Bookmarks = () => {
           <Header />
           <div className="p-4">
             <PostsList
+              type="bookmarks"
               loadMorePosts={loadMorePosts}
               loading={loading}
               error={error}

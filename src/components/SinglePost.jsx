@@ -1,3 +1,5 @@
+// /src/components/SinglePost.js
+
 import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import Post from "./Post";
@@ -14,9 +16,8 @@ const SinglePost = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [post, setPost] = useState(null);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Estado de carga
-  const { handleAddComment, handleLikePost, handleBookmarkPost, handleDeletePost } = usePosts();
-
+  const [loading, setLoading] = useState(true);
+  const { handleAddComment, handleLikePost, handleBookmarkPost, handleDeletePost, singlePost } = usePosts("single-post", postId);
   const id = JSON.parse(localStorage.getItem("user"))?._id;
 
   const toggleSidebar = () => {
@@ -25,18 +26,16 @@ const SinglePost = () => {
 
   useEffect(() => {
     const getPostData = async () => {
-      setLoading(true); // Comienza a cargar
+      setLoading(true);
       try {
         const response = await getPostById(postId);
-        console.log("🚀 ~ getPostData ~ response:", response);
         setPost(response);
-
         const user = await getUserById(response.authorId);
         setUser(user);
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false); // Termina de cargar
+        setLoading(false);
       }
     };
 
@@ -47,11 +46,7 @@ const SinglePost = () => {
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">
-      <Sidebar
-        isOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-        section={"bookmarks"}
-      />
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} section={"bookmarks"} />
       <div className="flex-1 flex flex-col lg:ml-64">
         <main className="flex-1 overflow-y-auto">
           <Header />
@@ -64,14 +59,14 @@ const SinglePost = () => {
                     <Skeleton height={20} width={100} baseColor="#333" highlightColor="#444" />
                   </div>
                 </div>
-                <Skeleton height={20} width={`60%`} baseColor="#333" highlightColor="#444" />
-                <Skeleton height={20} width={`80%`} baseColor="#333" highlightColor="#444" />
+                <Skeleton height={20} width={"60%"} baseColor="#333" highlightColor="#444" />
+                <Skeleton height={20} width={"80%"} baseColor="#333" highlightColor="#444" />
                 <Skeleton height={200} baseColor="#333" highlightColor="#444" />
               </div>
             ) : post ? (
               <Post
                 handleAddComment={handleAddComment}
-                post={post}
+                post={singlePost}
                 handleBookmarkPost={handleBookmarkPost}
                 handleDeletePost={handleDeletePost}
                 handleLikePost={handleLikePost}
@@ -79,7 +74,7 @@ const SinglePost = () => {
                 user={user}
               />
             ) : (
-              <div>Post not found</div> // Mensaje de error si no se encuentra el post
+              <div>Post not found</div>
             )}
           </div>
         </main>
