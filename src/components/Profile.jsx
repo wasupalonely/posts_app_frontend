@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "react-modal";
 import { ClipLoader } from "react-spinners";
@@ -10,6 +10,7 @@ Modal.setAppElement("#root");
 
 const Profile = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const { userId } = useParams();
   const navigate = useNavigate();
   const me = JSON.parse(localStorage.getItem("user"));
@@ -19,10 +20,65 @@ const Profile = () => {
 
   const isFollowing = user?.followers?.includes(myId);
 
-  const handleImageClick = useCallback((imageUrl) => {
-    setSelectedImage(imageUrl);
-  }, []);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+      uploadImage(file); // Llamar a la función para subir la imagen
+    }
+  };
 
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append("profile-pic", file);
+
+    try {
+      const response = await axios.patch(
+        `http://localhost:3000/api/v1/users/${userId}/update-photo`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setUser((prevUser) => ({
+        ...prevUser,
+        profilePicture: response.data.profilePicture,
+      }));
+      toast.success("Imagen de perfil actualizada con éxito!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } catch (error) {
+      console.error("Error al actualizar la imagen de perfil:", error);
+      toast.error("Error al actualizar la imagen de perfil 😢", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+  };
+
+  const handleImageClick = () => {
+    document.getElementById("changeImageInput").click();
+  };
 
   const handleFollowUser = async (authorId) => {
     const wasFollowing = isFollowing;
@@ -153,10 +209,11 @@ const Profile = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4">
       <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start sm:justify-between" >
-          <div className="flex">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start sm:justify-between">
+          <div className="flex relative" onClick={handleImageClick}>
             <img
               src={
+                imagePreview ||
                 user.profilePicture ||
                 "https://cdn-icons-png.flaticon.com/512/149/149071.png"
               }
@@ -164,9 +221,16 @@ const Profile = () => {
               className="w-24 h-24 sm:w-32 sm:h-32 rounded-full mb-4 sm:mb-0"
             />
             <button
-                  className=" right-[-8px] bg-white text-black rounded-full p-1 flex items-center justify-center w-6 h-6">
-                  <box-icon name='edit-alt' color='black' ></box-icon>
+              className="bg-white text-black rounded-full p-1 flex items-center justify-center w-6 h-6 absolute top-0 right-0 opacity-50 hover:opacity-100">
+              <box-icon name='edit-alt' color='black' ></box-icon>
             </button>
+            <input
+              id="changeImageInput"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
           </div>
           <div className="sm:ml-6 text-center sm:text-left">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
@@ -261,7 +325,6 @@ const Profile = () => {
               <div
                 key={index}
                 className="cursor-pointer relative rounded-lg overflow-hidden"
-                onClick={() => handleImageClick(post.imageUrl)}
               >
                 {post.media.length > 0 ? (
                   <img
